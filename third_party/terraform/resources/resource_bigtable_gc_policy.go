@@ -28,18 +28,21 @@ func resourceBigtableGCPolicy() *schema.Resource {
 				Required:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: compareResourceNames,
+				Description: `The name of the Bigtable instance.`,
 			},
 
 			"table": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: `The name of the table.`,
 			},
 
 			"column_family": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: `The name of the column family.`,
 			},
 
 			"mode": {
@@ -47,6 +50,7 @@ func resourceBigtableGCPolicy() *schema.Resource {
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{GCPolicyModeIntersection, GCPolicyModeUnion}, false),
+				Description: `If multiple policies are set, you should choose between UNION OR INTERSECTION.`,
 			},
 
 			"max_age": {
@@ -61,6 +65,7 @@ func resourceBigtableGCPolicy() *schema.Resource {
 						},
 					},
 				},
+				Description: `GC policy that applies to all cells older than the given age.`,
 			},
 
 			"max_version": {
@@ -75,6 +80,7 @@ func resourceBigtableGCPolicy() *schema.Resource {
 						},
 					},
 				},
+				Description: `GC policy that applies to all versions of a cell except for the most recent.`,
 			},
 
 			"project": {
@@ -82,6 +88,7 @@ func resourceBigtableGCPolicy() *schema.Resource {
 				Optional: true,
 				Computed: true,
 				ForceNew: true,
+				Description: `The ID of the project in which the resource belongs. If it is not provided, the provider project is used.`,
 			},
 		},
 	}
