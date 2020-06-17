@@ -25,19 +25,19 @@ func resourceDataprocJob() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"project": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
 				Description: `The project in which the cluster can be found and jobs subsequently run against. If it is not provided, the provider project is used.`,
 			},
 
 			// Ref: https://cloud.google.com/dataproc/docs/reference/rest/v1/projects.regions.jobs#JobReference
 			"region": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "global",
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "global",
+				ForceNew:    true,
 				Description: `The Cloud Dataproc region. This essentially determines which clusters are available for this job to be submitted to. If not specified, defaults to global.`,
 			},
 
@@ -45,9 +45,9 @@ func resourceDataprocJob() *schema.Resource {
 			// this flag to true however will force the deletion by first cancelling
 			// the job and then deleting it
 			"force_delete": {
-				Type:     schema.TypeBool,
-				Default:  false,
-				Optional: true,
+				Type:        schema.TypeBool,
+				Default:     false,
+				Optional:    true,
 				Description: `By default, you can only delete inactive jobs within Dataproc. Setting this to true, and calling destroy, will ensure that the job is first cancelled before issuing the delete.`,
 			},
 
