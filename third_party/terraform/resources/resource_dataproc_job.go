@@ -29,6 +29,7 @@ func resourceDataprocJob() *schema.Resource {
 				Optional: true,
 				Computed: true,
 				ForceNew: true,
+				Description: `The project in which the cluster can be found and jobs subsequently run against. If it is not provided, the provider project is used.`,
 			},
 
 			// Ref: https://cloud.google.com/dataproc/docs/reference/rest/v1/projects.regions.jobs#JobReference
@@ -37,6 +38,7 @@ func resourceDataprocJob() *schema.Resource {
 				Optional: true,
 				Default:  "global",
 				ForceNew: true,
+				Description: `The Cloud Dataproc region. This essentially determines which clusters are available for this job to be submitted to. If not specified, defaults to global.`,
 			},
 
 			// If a job is still running, trying to delete a job will fail. Setting
@@ -46,6 +48,7 @@ func resourceDataprocJob() *schema.Resource {
 				Type:     schema.TypeBool,
 				Default:  false,
 				Optional: true,
+				Description: `By default, you can only delete inactive jobs within Dataproc. Setting this to true, and calling destroy, will ensure that the job is first cancelled before issuing the delete.`,
 			},
 
 			"reference": {
@@ -122,12 +125,14 @@ func resourceDataprocJob() *schema.Resource {
 				Type:        schema.TypeString,
 				Description: "Output-only. A URI pointing to the location of the stdout of the job's driver program",
 				Computed:    true,
+				Description: `A URI pointing to the location of the stdout of the job's driver program.`,
 			},
 
 			"driver_controls_files_uri": {
 				Type:        schema.TypeString,
 				Description: "Output-only. If present, the location of miscellaneous control files which may be used as part of job setup and handling. If not present, control files may be placed in the same location as driver_output_uri.",
 				Computed:    true,
+				Description: `If present, the location of miscellaneous control files which may be used as part of job setup and handling. If not present, control files may be placed in the same location as driver_output_uri.`,
 			},
 
 			"labels": {
@@ -136,6 +141,7 @@ func resourceDataprocJob() *schema.Resource {
 				Optional:    true,
 				ForceNew:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: `The list of labels (key/value pairs) to add to the job.`,
 			},
 
 			"scheduling": {
