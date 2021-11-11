@@ -1,0 +1,136 @@
+resource "google_compute_packet_mirroring" "primary" {
+  collector_ilb {
+    url = google_compute_forwarding_rule.first_mirroring_internal.selfLink
+  }
+
+  location = "%{region}"
+
+  mirrored_resources {
+    instances {
+      url = google_compute_instance.basic.selfLink
+    }
+
+    subnetworks {
+      url = "projects/%{project_name}/regions/%{region}/subnetworks/default"
+    }
+
+    tags = ["tag-one"]
+  }
+
+  name = "tf-test-mirroring%{random_suffix}"
+
+  network {
+    url = "projects/%{project_name}/global/networks/default"
+  }
+
+  description = "A sample packet mirroring"
+  enable      = "TRUE"
+
+  filter {
+    cidr_ranges  = ["192.168.0.0/23"]
+    direction    = "BOTH"
+    ip_protocols = ["tcp"]
+  }
+
+  priority = 1000
+  project  = "%{project_name}"
+}
+
+resource "google_compute_instance" "basic" {
+  disks {
+    auto_delete = true
+    boot        = true
+
+    initialize_params {
+      source_image = "projects/debian-cloud/global/images/debian-10-buster-v20210817"
+    }
+
+    type = "PERSISTENT"
+  }
+
+  machine_type = "zones/%{zone}/machineTypes/e2-medium"
+  name         = "tf-test-instance1%{random_suffix}"
+
+  network_interfaces {
+    network = "global/networks/default"
+  }
+
+  project = "%{project_name}"
+  zone    = "%{zone}"
+}
+
+resource "google_compute_instance" "nics" {
+  disks {
+    auto_delete = true
+    boot        = true
+
+    initialize_params {
+      source_image = "projects/debian-cloud/global/images/debian-10-buster-v20210817"
+    }
+
+    type = "PERSISTENT"
+  }
+
+  machine_type = "zones/%{zone}/machineTypes/e2-medium"
+  name         = "tf-test-instance2%{random_suffix}"
+
+  network_interfaces {
+    subnetwork = google_compute_subnetwork.minimal.selfLink
+  }
+
+  network_interfaces {
+    access_configs {
+      name = "External NAT"
+      type = "ONE_TO_ONE_NAT"
+    }
+
+    network = "global/networks/default"
+  }
+
+  project = "%{project_name}"
+  zone    = "%{zone}"
+}
+
+resource "google_compute_forwarding_rule" "first_mirroring_internal" {
+  name                   = "tf-test-rule1%{random_suffix}"
+  all_ports              = true
+  backend_service        = google_compute_region_backend_service.regional.selfLink
+  description            = "A test fmirror collector orwarding rule with internal load balancing scheme"
+  is_mirroring_collector = true
+  load_balancing_scheme  = "INTERNAL"
+  network_tier           = "PREMIUM"
+  project                = "%{project_name}"
+  region                 = "%{region}"
+}
+
+resource "google_compute_forwarding_rule" "second_mirroring_internal" {
+  name                   = "tf-test-rule2%{random_suffix}"
+  all_ports              = true
+  backend_service        = google_compute_region_backend_service.regional.selfLink
+  description            = "A test mirror collector forwarding rule with internal load balancing scheme"
+  is_mirroring_collector = true
+  load_balancing_scheme  = "INTERNAL"
+  network_tier           = "PREMIUM"
+  project                = "%{project_name}"
+  region                 = "%{region}"
+}
+
+resource "google_compute_region_backend_service" "regional" {
+  name                  = "tf-test-service%{random_suffix}"
+  load_balancing_scheme = "INTERNAL"
+  location              = "%{region}"
+  project               = "%{project_name}"
+}
+
+resource "google_compute_subnetwork" "minimal" {
+  ip_cidr_range = "10.2.0.0/16"
+  name          = "tf_test_compute_subnetwork%{random_suffix}"
+  network       = google_compute_network.legacy.selfLink
+  project       = "%{project_name}"
+  region        = "%{region}"
+}
+
+resource "google_compute_network" "legacy" {
+  name    = "tf_test_compute_network%{random_suffix}"
+  project = "%{project_name}"
+}
