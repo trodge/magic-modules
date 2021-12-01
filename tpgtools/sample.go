@@ -7,7 +7,6 @@ import (
 	"regexp"
 	"strings"
 
-	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
 	"github.com/golang/glog"
 )
 
@@ -302,7 +301,7 @@ func basicResourceName(depFilename string) string {
 	re = regexp.MustCompile("^update(_\\d)?_")
 	// update_1_name.resource.json -> name.resource.json
 	prefixTrimmed := re.ReplaceAllString(basicReplaced, "")
-	return dcl.SnakeToJSONCase(strings.Split(prefixTrimmed, ".")[0])
+	return strings.Split(prefixTrimmed, ".")[0]
 }
 
 // ExpandContext expands the context model used in the generated tests
