@@ -1,0 +1,4 @@
+ignore_read:
+- mirrored_resources.0.instances.0.url
+- mirrored_resources.0.subnetworks.0.url
+- network.0.url
