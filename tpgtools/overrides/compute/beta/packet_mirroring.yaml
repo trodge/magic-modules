@@ -1,0 +1,14 @@
+- type: EXCLUDE
+  field: region
+- type: EXCLUDE
+  field: enable
+- type: CUSTOM_NAME
+  details:
+    name: region
+  field: location
+- type: CUSTOM_SCHEMA_VALUES
+  field: location
+  details:
+    required: false
+    optional: true
+    computed: true

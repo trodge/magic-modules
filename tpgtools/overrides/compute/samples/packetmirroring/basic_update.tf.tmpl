@@ -3,7 +3,7 @@ resource "google_compute_packet_mirroring" "primary" {
     url = google_compute_forwarding_rule.second_mirroring_internal.self_link
   }
 
-  location = "{{region}}"
+  region = "{{region}}"
 
   mirrored_resources {
     instances {
