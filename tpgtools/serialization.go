@@ -73,6 +73,8 @@ func DCLToTerraformReference(resourceType, version string) (string, error) {
 			return "google_compute_forwarding_rule", nil
 		case "ComputeGlobalForwardingRule":
 			return "google_compute_global_forwarding_rule", nil
+		case "ComputePacketMirroring":
+			return "google_compute_packet_mirroring", nil
 		case "DataprocWorkflowTemplate":
 			return "google_dataproc_workflow_template", nil
 		case "EventarcTrigger":
@@ -113,6 +115,8 @@ func DCLToTerraformReference(resourceType, version string) (string, error) {
 		return "google_compute_forwarding_rule", nil
 	case "ComputeGlobalForwardingRule":
 		return "google_compute_global_forwarding_rule", nil
+	case "ComputePacketMirroring":
+		return "google_compute_packet_mirroring", nil
 	case "DataprocWorkflowTemplate":
 		return "google_dataproc_workflow_template", nil
 	case "EventarcTrigger":
@@ -152,6 +156,8 @@ func DCLToTerraformSampleName(service, resource string) (string, string, error) 
 		return "Compute", "FirewallPolicyRule", nil
 	case "computeforwardingrule":
 		return "Compute", "ForwardingRule", nil
+	case "computepacketmirroring":
+		return "Compute", "PacketMirroring", nil
 	case "dataprocworkflowtemplate":
 		return "Dataproc", "WorkflowTemplate", nil
 	case "eventarctrigger":
@@ -232,6 +238,12 @@ func ConvertSampleJSONToHCL(resourceType string, version string, hasGAEquivalent
 				return "", err
 			}
 			return ComputeGlobalForwardingRuleBetaAsHCL(*r, hasGAEquivalent)
+		case "ComputePacketMirroring":
+			r := &computeBeta.PacketMirroring{}
+			if err := json.Unmarshal(b, r); err != nil {
+				return "", err
+			}
+			return ComputePacketMirroringBetaAsHCL(*r, hasGAEquivalent)
 		case "DataprocWorkflowTemplate":
 			r := &dataprocBeta.WorkflowTemplate{}
 			if err := json.Unmarshal(b, r); err != nil {
@@ -344,6 +356,12 @@ func ConvertSampleJSONToHCL(resourceType string, version string, hasGAEquivalent
 			return "", err
 		}
 		return ComputeGlobalForwardingRuleAsHCL(*r, hasGAEquivalent)
+	case "ComputePacketMirroring":
+		r := &compute.PacketMirroring{}
+		if err := json.Unmarshal(b, r); err != nil {
+			return "", err
+		}
+		return ComputePacketMirroringAsHCL(*r, hasGAEquivalent)
 	case "DataprocWorkflowTemplate":
 		r := &dataproc.WorkflowTemplate{}
 		if err := json.Unmarshal(b, r); err != nil {
@@ -926,6 +944,146 @@ func convertComputeGlobalForwardingRuleBetaMetadataFilterFilterLabelToHCL(r *com
 	}
 	if r.Value != nil {
 		outputConfig += fmt.Sprintf("\tvalue = %#v\n", *r.Value)
+	}
+	return outputConfig + "}"
+}
+
+// ComputePacketMirroringBetaAsHCL returns a string representation of the specified resource in HCL.
+// The generated HCL will include every settable field as a literal - that is, no
+// variables, no references.  This may not be the best possible representation, but
+// the crucial point is that `terraform import; terraform apply` will not produce
+// any changes.  We do not validate that the resource specified will pass terraform
+// validation unless is an object returned from the API after an Apply.
+func ComputePacketMirroringBetaAsHCL(r computeBeta.PacketMirroring, hasGAEquivalent bool) (string, error) {
+	outputConfig := "resource \"google_compute_packet_mirroring\" \"output\" {\n"
+	if v := convertComputePacketMirroringBetaCollectorIlbToHCL(r.CollectorIlb); v != "" {
+		outputConfig += fmt.Sprintf("\tcollector_ilb %s\n", v)
+	}
+	if v := convertComputePacketMirroringBetaMirroredResourcesToHCL(r.MirroredResources); v != "" {
+		outputConfig += fmt.Sprintf("\tmirrored_resources %s\n", v)
+	}
+	if r.Name != nil {
+		outputConfig += fmt.Sprintf("\tname = %#v\n", *r.Name)
+	}
+	if v := convertComputePacketMirroringBetaNetworkToHCL(r.Network); v != "" {
+		outputConfig += fmt.Sprintf("\tnetwork %s\n", v)
+	}
+	if r.Description != nil {
+		outputConfig += fmt.Sprintf("\tdescription = %#v\n", *r.Description)
+	}
+	if v := convertComputePacketMirroringBetaFilterToHCL(r.Filter); v != "" {
+		outputConfig += fmt.Sprintf("\tfilter %s\n", v)
+	}
+	if r.Priority != nil {
+		outputConfig += fmt.Sprintf("\tpriority = %#v\n", *r.Priority)
+	}
+	if r.Project != nil {
+		outputConfig += fmt.Sprintf("\tproject = %#v\n", *r.Project)
+	}
+	if r.Location != nil {
+		outputConfig += fmt.Sprintf("\tregion = %#v\n", *r.Location)
+	}
+	formatted, err := formatHCL(outputConfig + "}")
+	if err != nil {
+		return "", err
+	}
+	if !hasGAEquivalent {
+		// The formatter will not accept the google-beta symbol because it is injected during testing.
+		return withProviderLine(formatted), nil
+	}
+	return formatted, nil
+}
+
+func convertComputePacketMirroringBetaCollectorIlbToHCL(r *computeBeta.PacketMirroringCollectorIlb) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.Url != nil {
+		outputConfig += fmt.Sprintf("\turl = %#v\n", *r.Url)
+	}
+	return outputConfig + "}"
+}
+
+func convertComputePacketMirroringBetaMirroredResourcesToHCL(r *computeBeta.PacketMirroringMirroredResources) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.Instances != nil {
+		for _, v := range r.Instances {
+			outputConfig += fmt.Sprintf("\tinstances %s\n", convertComputePacketMirroringBetaMirroredResourcesInstancesToHCL(&v))
+		}
+	}
+	if r.Subnetworks != nil {
+		for _, v := range r.Subnetworks {
+			outputConfig += fmt.Sprintf("\tsubnetworks %s\n", convertComputePacketMirroringBetaMirroredResourcesSubnetworksToHCL(&v))
+		}
+	}
+	if r.Tags != nil {
+		outputConfig += "\ttags = ["
+		for _, v := range r.Tags {
+			outputConfig += fmt.Sprintf("%#v, ", v)
+		}
+		outputConfig += "]\n"
+	}
+	return outputConfig + "}"
+}
+
+func convertComputePacketMirroringBetaMirroredResourcesInstancesToHCL(r *computeBeta.PacketMirroringMirroredResourcesInstances) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.Url != nil {
+		outputConfig += fmt.Sprintf("\turl = %#v\n", *r.Url)
+	}
+	return outputConfig + "}"
+}
+
+func convertComputePacketMirroringBetaMirroredResourcesSubnetworksToHCL(r *computeBeta.PacketMirroringMirroredResourcesSubnetworks) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.Url != nil {
+		outputConfig += fmt.Sprintf("\turl = %#v\n", *r.Url)
+	}
+	return outputConfig + "}"
+}
+
+func convertComputePacketMirroringBetaNetworkToHCL(r *computeBeta.PacketMirroringNetwork) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.Url != nil {
+		outputConfig += fmt.Sprintf("\turl = %#v\n", *r.Url)
+	}
+	return outputConfig + "}"
+}
+
+func convertComputePacketMirroringBetaFilterToHCL(r *computeBeta.PacketMirroringFilter) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.CidrRanges != nil {
+		outputConfig += "\tcidr_ranges = ["
+		for _, v := range r.CidrRanges {
+			outputConfig += fmt.Sprintf("%#v, ", v)
+		}
+		outputConfig += "]\n"
+	}
+	if r.Direction != nil {
+		outputConfig += fmt.Sprintf("\tdirection = %#v\n", *r.Direction)
+	}
+	if r.IPProtocols != nil {
+		outputConfig += "\tip_protocols = ["
+		for _, v := range r.IPProtocols {
+			outputConfig += fmt.Sprintf("%#v, ", v)
+		}
+		outputConfig += "]\n"
 	}
 	return outputConfig + "}"
 }
@@ -4062,6 +4220,146 @@ func convertComputeGlobalForwardingRuleMetadataFilterFilterLabelToHCL(r *compute
 	return outputConfig + "}"
 }
 
+// ComputePacketMirroringAsHCL returns a string representation of the specified resource in HCL.
+// The generated HCL will include every settable field as a literal - that is, no
+// variables, no references.  This may not be the best possible representation, but
+// the crucial point is that `terraform import; terraform apply` will not produce
+// any changes.  We do not validate that the resource specified will pass terraform
+// validation unless is an object returned from the API after an Apply.
+func ComputePacketMirroringAsHCL(r compute.PacketMirroring, hasGAEquivalent bool) (string, error) {
+	outputConfig := "resource \"google_compute_packet_mirroring\" \"output\" {\n"
+	if v := convertComputePacketMirroringCollectorIlbToHCL(r.CollectorIlb); v != "" {
+		outputConfig += fmt.Sprintf("\tcollector_ilb %s\n", v)
+	}
+	if v := convertComputePacketMirroringMirroredResourcesToHCL(r.MirroredResources); v != "" {
+		outputConfig += fmt.Sprintf("\tmirrored_resources %s\n", v)
+	}
+	if r.Name != nil {
+		outputConfig += fmt.Sprintf("\tname = %#v\n", *r.Name)
+	}
+	if v := convertComputePacketMirroringNetworkToHCL(r.Network); v != "" {
+		outputConfig += fmt.Sprintf("\tnetwork %s\n", v)
+	}
+	if r.Description != nil {
+		outputConfig += fmt.Sprintf("\tdescription = %#v\n", *r.Description)
+	}
+	if v := convertComputePacketMirroringFilterToHCL(r.Filter); v != "" {
+		outputConfig += fmt.Sprintf("\tfilter %s\n", v)
+	}
+	if r.Priority != nil {
+		outputConfig += fmt.Sprintf("\tpriority = %#v\n", *r.Priority)
+	}
+	if r.Project != nil {
+		outputConfig += fmt.Sprintf("\tproject = %#v\n", *r.Project)
+	}
+	if r.Location != nil {
+		outputConfig += fmt.Sprintf("\tregion = %#v\n", *r.Location)
+	}
+	formatted, err := formatHCL(outputConfig + "}")
+	if err != nil {
+		return "", err
+	}
+	if !hasGAEquivalent {
+		// The formatter will not accept the google-beta symbol because it is injected during testing.
+		return withProviderLine(formatted), nil
+	}
+	return formatted, nil
+}
+
+func convertComputePacketMirroringCollectorIlbToHCL(r *compute.PacketMirroringCollectorIlb) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.Url != nil {
+		outputConfig += fmt.Sprintf("\turl = %#v\n", *r.Url)
+	}
+	return outputConfig + "}"
+}
+
+func convertComputePacketMirroringMirroredResourcesToHCL(r *compute.PacketMirroringMirroredResources) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.Instances != nil {
+		for _, v := range r.Instances {
+			outputConfig += fmt.Sprintf("\tinstances %s\n", convertComputePacketMirroringMirroredResourcesInstancesToHCL(&v))
+		}
+	}
+	if r.Subnetworks != nil {
+		for _, v := range r.Subnetworks {
+			outputConfig += fmt.Sprintf("\tsubnetworks %s\n", convertComputePacketMirroringMirroredResourcesSubnetworksToHCL(&v))
+		}
+	}
+	if r.Tags != nil {
+		outputConfig += "\ttags = ["
+		for _, v := range r.Tags {
+			outputConfig += fmt.Sprintf("%#v, ", v)
+		}
+		outputConfig += "]\n"
+	}
+	return outputConfig + "}"
+}
+
+func convertComputePacketMirroringMirroredResourcesInstancesToHCL(r *compute.PacketMirroringMirroredResourcesInstances) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.Url != nil {
+		outputConfig += fmt.Sprintf("\turl = %#v\n", *r.Url)
+	}
+	return outputConfig + "}"
+}
+
+func convertComputePacketMirroringMirroredResourcesSubnetworksToHCL(r *compute.PacketMirroringMirroredResourcesSubnetworks) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.Url != nil {
+		outputConfig += fmt.Sprintf("\turl = %#v\n", *r.Url)
+	}
+	return outputConfig + "}"
+}
+
+func convertComputePacketMirroringNetworkToHCL(r *compute.PacketMirroringNetwork) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.Url != nil {
+		outputConfig += fmt.Sprintf("\turl = %#v\n", *r.Url)
+	}
+	return outputConfig + "}"
+}
+
+func convertComputePacketMirroringFilterToHCL(r *compute.PacketMirroringFilter) string {
+	if r == nil {
+		return ""
+	}
+	outputConfig := "{\n"
+	if r.CidrRanges != nil {
+		outputConfig += "\tcidr_ranges = ["
+		for _, v := range r.CidrRanges {
+			outputConfig += fmt.Sprintf("%#v, ", v)
+		}
+		outputConfig += "]\n"
+	}
+	if r.Direction != nil {
+		outputConfig += fmt.Sprintf("\tdirection = %#v\n", *r.Direction)
+	}
+	if r.IPProtocols != nil {
+		outputConfig += "\tip_protocols = ["
+		for _, v := range r.IPProtocols {
+			outputConfig += fmt.Sprintf("%#v, ", v)
+		}
+		outputConfig += "]\n"
+	}
+	return outputConfig + "}"
+}
+
 // DataprocWorkflowTemplateAsHCL returns a string representation of the specified resource in HCL.
 // The generated HCL will include every settable field as a literal - that is, no
 // variables, no references.  This may not be the best possible representation, but
@@ -6536,6 +6834,140 @@ func convertComputeGlobalForwardingRuleBetaMetadataFilterFilterLabelList(i inter
 
 	for _, v := range i.([]interface{}) {
 		out = append(out, convertComputeGlobalForwardingRuleBetaMetadataFilterFilterLabel(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringBetaCollectorIlb(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"url":          in["url"],
+		"canonicalUrl": in["canonical_url"],
+	}
+}
+
+func convertComputePacketMirroringBetaCollectorIlbList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringBetaCollectorIlb(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringBetaMirroredResources(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"instances":   in["instances"],
+		"subnetworks": in["subnetworks"],
+		"tags":        in["tags"],
+	}
+}
+
+func convertComputePacketMirroringBetaMirroredResourcesList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringBetaMirroredResources(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringBetaMirroredResourcesInstances(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"url":          in["url"],
+		"canonicalUrl": in["canonical_url"],
+	}
+}
+
+func convertComputePacketMirroringBetaMirroredResourcesInstancesList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringBetaMirroredResourcesInstances(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringBetaMirroredResourcesSubnetworks(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"url":          in["url"],
+		"canonicalUrl": in["canonical_url"],
+	}
+}
+
+func convertComputePacketMirroringBetaMirroredResourcesSubnetworksList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringBetaMirroredResourcesSubnetworks(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringBetaNetwork(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"url":          in["url"],
+		"canonicalUrl": in["canonical_url"],
+	}
+}
+
+func convertComputePacketMirroringBetaNetworkList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringBetaNetwork(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringBetaFilter(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"cidrRanges":  in["cidr_ranges"],
+		"direction":   in["direction"],
+		"iPProtocols": in["ip_protocols"],
+	}
+}
+
+func convertComputePacketMirroringBetaFilterList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringBetaFilter(v))
 	}
 	return out
 }
@@ -9366,6 +9798,140 @@ func convertComputeGlobalForwardingRuleMetadataFilterFilterLabelList(i interface
 
 	for _, v := range i.([]interface{}) {
 		out = append(out, convertComputeGlobalForwardingRuleMetadataFilterFilterLabel(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringCollectorIlb(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"url":          in["url"],
+		"canonicalUrl": in["canonical_url"],
+	}
+}
+
+func convertComputePacketMirroringCollectorIlbList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringCollectorIlb(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringMirroredResources(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"instances":   in["instances"],
+		"subnetworks": in["subnetworks"],
+		"tags":        in["tags"],
+	}
+}
+
+func convertComputePacketMirroringMirroredResourcesList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringMirroredResources(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringMirroredResourcesInstances(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"url":          in["url"],
+		"canonicalUrl": in["canonical_url"],
+	}
+}
+
+func convertComputePacketMirroringMirroredResourcesInstancesList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringMirroredResourcesInstances(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringMirroredResourcesSubnetworks(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"url":          in["url"],
+		"canonicalUrl": in["canonical_url"],
+	}
+}
+
+func convertComputePacketMirroringMirroredResourcesSubnetworksList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringMirroredResourcesSubnetworks(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringNetwork(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"url":          in["url"],
+		"canonicalUrl": in["canonical_url"],
+	}
+}
+
+func convertComputePacketMirroringNetworkList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringNetwork(v))
+	}
+	return out
+}
+
+func convertComputePacketMirroringFilter(i interface{}) map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	in := i.(map[string]interface{})
+	return map[string]interface{}{
+		"cidrRanges":  in["cidr_ranges"],
+		"direction":   in["direction"],
+		"iPProtocols": in["ip_protocols"],
+	}
+}
+
+func convertComputePacketMirroringFilterList(i interface{}) (out []map[string]interface{}) {
+	if i == nil {
+		return nil
+	}
+
+	for _, v := range i.([]interface{}) {
+		out = append(out, convertComputePacketMirroringFilter(v))
 	}
 	return out
 }

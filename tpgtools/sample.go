@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	dcl "github.com/GoogleCloudPlatform/declarative-resource-client-library/dcl"
 	"github.com/golang/glog"
 )
 
