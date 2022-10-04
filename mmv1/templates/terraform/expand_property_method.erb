@@ -59,13 +59,13 @@ func expand<%= prefix -%><%= titlelize_property(property) -%>(v interface{}, d T
 
 <%# Generate expanders for KeyValuePairs %>
 <%   elsif property.is_a?(Api::Type::KeyValuePairs) -%>
-func expand<%= prefix -%><%= titlelize_property(property) -%>(v interface{}, d TerraformResourceData, config *Config) (map[string]string, error) {
+func expand<%= prefix -%><%= titlelize_property(property) -%>(v interface{}, d TerraformResourceData, config *Config) (map[string]<%= property.go_value_type -%>, error) {
   if v == nil {
-    return map[string]string{}, nil
+    return map[string]<%= property.go_value_type -%>{}, nil
   }
-  m := make(map[string]string)
+  m := make(map[string]<%= property.go_value_type -%>)
   for k, val := range v.(map[string]interface{}) {
-    m[k] = val.(string)
+    m[k] = val.(<%= property.go_value_type -%>)
   }
   return m, nil
 }

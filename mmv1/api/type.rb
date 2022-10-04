@@ -620,11 +620,25 @@ module Api
       end
     end
 
-    # An array of string -> string key -> value pairs, such as labels.
+    # An array of string -> string or string -> int key -> value pairs, such as labels.
     # While this is technically a map, it's split out because it's a much
     # simpler property to generate and means we can avoid conditional logic
     # in Map.
     class KeyValuePairs < Composite
+      # The type definition of the contents of the map.
+      attr_reader :value_type
+
+      def value_type_class
+        return @value_type \
+          if @value_type.class == Class
+
+        Object.const_get(@value_type)
+      end
+      def go_value_type
+        return "int" \
+          if @value_type == "Api::Type::Integer"
+        return "string"
+      end
     end
 
     # Map from string keys -> nested object entries

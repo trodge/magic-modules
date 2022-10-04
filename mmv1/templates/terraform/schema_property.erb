@@ -138,7 +138,11 @@
     <% end -%>
   <% end -%>
 <% elsif property.is_a?(Api::Type::KeyValuePairs) -%>
+  <% if property.value_type.nil? -%>
   Elem: &schema.Schema{Type: schema.TypeString},
+  <% elsif property.value_type.is_a?(String) -%>
+  Elem: &schema.Schema{Type: <%= tf_types[property.value_type_class] -%>},
+  <% end -%>
 <% elsif property.is_a?(Api::Type::Map) -%>
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{

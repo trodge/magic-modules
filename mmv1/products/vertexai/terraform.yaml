@@ -49,6 +49,17 @@ overrides: !ruby/object:Overrides::ResourceOverrides
         ignore_read: true
       name: !ruby/object:Overrides::Terraform::PropertyOverride
         custom_flatten: templates/terraform/custom_flatten/name_from_self_link.erb
+  EndpointTrafficSplit: !ruby/object:Overrides::Terraform::ResourceOverride
+    examples:
+      - !ruby/object:Provider::Terraform::Examples
+        name: "vertex_ai_endpoint_traffic_split"
+        primary_resource_id: "endpoint_traffic_split"
+        vars:
+          name: "vertex_ai_endpoint_traffic_split"
+          project: "vertex-ai"
+    custom_code: !ruby/object:Provider::Terraform::CustomCode
+      custom_create: templates/terraform/custom_create/vertex_endpoint_traffic_split.go
+      custom_delete: templates/terraform/custom_delete/vertex_endpoint_traffic_split.go
   Featurestore: !ruby/object:Overrides::Terraform::ResourceOverride
     autogen_async: false
     skip_sweeper: true

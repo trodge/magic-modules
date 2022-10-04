@@ -318,6 +318,44 @@ objects:
         description: 'Output only. Resource name of the Model Monitoring job associated with this Endpoint if monitoring is enabled by CreateModelDeploymentMonitoringJob. Format: `projects/{project}/locations/{location}/modelDeploymentMonitoringJobs/{model_deployment_monitoring_job}`'
         output: true
 
+# Vertex AI Endpoint Traffic Split
+  - !ruby/object:Api::Resource
+    name: EndpointTrafficSplit
+    base_url: projects/{{project}}/locations/{{location}}/endpoints
+    create_url: projects/{{project}}/locations/{{location}}/endpoints
+    self_link: 'projects/{{project}}/locations/{{location}}/endpoints/{{endpoint}}'
+    update_verb: :PATCH
+    update_mask: true
+    references: !ruby/object:Api::Resource::ReferenceLinks
+      guides:
+        'Official Documentation':
+          'https://cloud.google.com/vertex-ai/docs'
+      api: 'https://cloud.google.com/vertex-ai/docs/reference/rest/v1beta1/projects.locations.endpoints'
+    description: "A map from a DeployedModel's ID to the percentage of this Endpoint's traffic that should be forwarded to that DeployedModel."
+    parameters:
+      - !ruby/object:Api::Type::String
+        name: endpoint
+        description: The endpoint for the resource
+        url_param_only: true
+        required: true
+        input: true
+      - !ruby/object:Api::Type::String
+        name: location
+        description: The location for the resource
+        url_param_only: true
+        required: true
+        input: true
+    properties:
+      - !ruby/object:Api::Type::String
+        name: etag
+        description: Used to perform consistent read-modify-write updates. If not set, a blind "overwrite" update happens.
+        output: true
+      - !ruby/object:Api::Type::KeyValuePairs
+        name: trafficSplit
+        description: A map from a DeployedModel's ID to the percentage of this Endpoint's traffic that should be forwarded to that DeployedModel. If a DeployedModel's ID is not listed in this map, then it receives no traffic. The traffic percentage values must add up to 100, or map must be empty if the Endpoint is to not accept any traffic at a moment.
+        required: true
+        value_type: Api::Type::Integer
+
 # Vertex AI Featurestores
   - !ruby/object:Api::Resource
     name: Featurestore
