@@ -1,0 +1,479 @@
+# Copyright 2017 Google Inc.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+--- !ruby/object:Api::Product
+name: CloudWorkstations
+display_name: Cloud Workstations
+versions:
+  - !ruby/object:Api::Product::Version
+    name: beta
+    base_url: https://workstations.googleapis.com/v1beta/
+scopes:
+  - https://www.googleapis.com/auth/cloud-platform
+apis_required:
+  - !ruby/object:Api::Product::ApiReference
+    name: Cloud Workstations API
+    url: https://console.cloud.google.com/apis/library/workstations.googleapis.com/
+objects:
+  - !ruby/object:Api::Resource
+    name: 'WorkstationClusters'
+    base_url: projects/{{project}}/locations/{{location}}/workstationClusters
+    create_url: projects/{{project}}/locations/{{location}}/workstationClusters?workstationClusterId={{name}}
+    update_verb: :PATCH
+    description: |
+      A grouping of WorkstationConfigs and their associated Workstations in a region.
+    references: !ruby/object:Api::Resource::ReferenceLinks
+      guides:
+        'Official Documentation': 'https://cloud.google.com/workstations/docs/'
+      api: 'https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.locations.workstationClusters'
+    parameters:
+      - !ruby/object:Api::Type::String
+        name: 'location'
+        description: 'The [Cloud Workstation location](https://cloud.google.com/workstations/docs/locations) for the cluster.'
+        input: true
+        url_param_only: true
+    properties:
+      - !ruby/object:Api::Type::String
+        name: 'name'
+        description: |
+          Name of the requested resource.
+        input: true
+        required: true
+      - !ruby/object:Api::Type::String
+        name: 'displayName'
+        description: |
+          Human-readable name for this resource.
+        input: true
+        required: true
+      - !ruby/object:Api::Type::String
+        name: 'uid'
+        description: |
+          Output only. A system-assigned unique identified for this resource.
+        output: true
+      - !ruby/object:Api::Type::Boolean
+        name: 'reconciling'
+        description: |
+          Output only. Indicates whether this resource is currently being updated to match its intended state.
+        output: true
+      - !ruby/object:Api::Type::KeyValuePairs
+        name: 'annotations'
+        description: |
+          Client-specified annotations.
+      - !ruby/object:Api::Type::KeyValuePairs
+        name: 'labels'
+        description: |
+          Client-specified labels that are applied to the resource and that are also propagated to the underlying 
+          Compute Engine resources.
+      - !ruby/object:Api::Type::String
+        name: 'createTime'
+        description: |
+          Output only. Time when this resource was created.
+        output: true
+      - !ruby/object:Api::Type::String
+        name: 'updateTime'
+        description: |
+          Output only. Time when this resource was most recently updated.
+        output: true
+      - !ruby/object:Api::Type::String
+        name: 'deleteTime'
+        description: |
+          Output only. Time when this resource was soft-deleted.
+        output: true
+      - !ruby/object:Api::Type::String
+        name: 'etag'
+        description: |
+          Checksum computed by the server. 
+          May be sent on update and delete requests to ensure that the client has an up-to-date value before proceeding.
+      - !ruby/object:Api::Type::String
+        name: 'network'
+        description: |
+          Name of the Compute Engine network in which instances associated with this cluster will be created.
+      - !ruby/object:Api::Type::String
+        name: 'subnetwork'
+        description: |
+          Name of the Compute Engine subnetwork in which instances associated with this cluster will be created. 
+          Must be part of the subnetwork specified for this cluster
+      - !ruby/object:Api::Type::NestedObject
+        name: 'privateClusterConfig'
+        description: Configuration for private cluster.
+        properties:
+          - !ruby/object:Api::Type::Boolean
+            name: 'enablePrivateEndpoint'
+            required: true
+            description: Whether Workstations endpoint is private.
+          - !ruby/object:Api::Type::String
+            name: 'clusterHostname'
+            output: true
+            description: |
+              Output only. Hostname for the workstation cluster. 
+              This field will be populated only when private endpoint is enabled. To access workstations in the cluster, 
+              create a new DNS zone mapping this domain name to an internal IP address and a forwarding rule mapping that 
+              address to the service attachment.
+          - !ruby/object:Api::Type::String
+            name: 'serviceAttachmentUri'
+            output: true
+            description: |
+              Output only. Service attachment URI for the workstation cluster. The service attachemnt is created when private endpoint is enabled. 
+              To access workstations in the cluster, configure access to the managed service using (Private Service Connect)[https://cloud.google.com/vpc/docs/configure-private-service-connect-services].   
+      - !ruby/object:Api::Type::Boolean
+        name: 'degraded'
+        description: |
+          Output only. Whether this resource is in degraded mode, in which case it may require user action to restore full functionality.
+          Details can be found in the conditions field.
+        output: true
+      - !ruby/object:Api::Type::Array
+        name: 'conditions'
+        output: true
+        description: |
+          Output only. Status conditions describing the current resource state.
+        item_type: !ruby/object:Api::Type::NestedObject
+          name: 'status'
+          description: 'Message containing a status code, status message, and details.'
+          properties:
+            - !ruby/object:Api::Type::Integer
+              name: 'code'
+              description: |
+                The status code.
+            - !ruby/object:Api::Type::String
+              name: 'message'
+              description: |
+                A developer-facing error message.
+            - !ruby/object:Api::Type::Array
+              name: 'details'
+              item_type: Api::Type::String
+              description: |
+                A list of messages that carry the details.   
+  - !ruby/object:Api::Resource
+    name: 'WorkstationConfigs'
+    base_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{clusterName}}/workstationConfigs/{{name}}
+    create_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{clusterName}}/workstationConfigs?workstationConfigId={{name}}
+    update_verb: :PATCH
+    description: |
+      A set of configuration options describing how a workstation will be run. 
+      Workstation configurations are intended to be shared across multiple workstations.
+    references: !ruby/object:Api::Resource::ReferenceLinks
+      api: 'https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.locations.workstationClusters.workstationConfigs'
+    parameters:
+      - !ruby/object:Api::Type::String
+        name: 'location'
+        description: 'The [Cloud Workstation location](https://cloud.google.com/workstations/docs/locations) for the cluster config.'
+        input: true
+        url_param_only: true
+    properties:
+      - !ruby/object:Api::Type::String
+        name: 'name'
+        description: |
+          Full name of this resource.
+        input: true
+        required: true
+      - !ruby/object:Api::Type::String
+        name: 'displayName'
+        description: |
+          Human-readable name for this resource.
+        input: true
+        required: true
+      - !ruby/object:Api::Type::String
+        name: 'uid'
+        description: |
+          Output only. A system-assigned unique identified for this resource.
+        output: true
+      - !ruby/object:Api::Type::Boolean
+        name: 'reconciling'
+        description: |
+          Output only. Indicates whether this resource is currently being updated to match its intended state.
+        output: true
+      - !ruby/object:Api::Type::KeyValuePairs
+        name: 'annotations'
+        description: |
+          Client-specified annotations.
+      - !ruby/object:Api::Type::KeyValuePairs
+        name: 'labels'
+        description: |
+          Client-specified labels that are applied to the resource and that are also propagated to the underlying 
+          Compute Engine resources.
+      - !ruby/object:Api::Type::String
+        name: 'createTime'
+        description: |
+          Output only. Time when this resource was created.
+        output: true
+      - !ruby/object:Api::Type::String
+        name: 'updateTime'
+        description: |
+          Output only. Time when this resource was most recently updated.
+        output: true
+      - !ruby/object:Api::Type::String
+        name: 'deleteTime'
+        description: |
+          Output only. Time when this resource was soft-deleted.
+        output: true
+      - !ruby/object:Api::Type::String
+        name: 'etag'
+        description: |
+          Checksum computed by the server. 
+          May be sent on update and delete requests to ensure that the client has an up-to-date value before proceeding.
+      - !ruby/object:Api::Type::Time
+        name: "idleTimeout"
+        description: |
+          How long to wait before automatically stopping an instance that hasn't received any user traffic. 
+          A value of 0 indicates that this instance should never time out due to idleness. Defaults to 20 minutes.
+      - !ruby/object:Api::Type::Time
+        name: "runningTimeout"
+        description: |
+          How long to wait before automatically stopping a workstation after it started. 
+          A value of 0 indicates that workstations using this config should never time out. 
+          Must be greater than 0 and less than 24 hours if encryptionKey is set. Defaults to 12 hours.
+      - !ruby/object:Api::Type::NestedObject
+        name: 'host'
+        description: |
+          Runtime host for a workstation.
+        properties:
+          - !ruby/object:Api::Type::NestedObject
+            name: 'gceInstance'
+            description: |
+              Specifies a Compute Engine instance as the host.
+            properties:
+              - !ruby/object:Api::Type::String
+                name: "machineType"
+                description: |
+                  The name of a Compute Engine machine type.
+              - !ruby/object:Api::Type::String
+                name: "serviceAccount"
+                description: |
+                  Email address of the service account that will be used on VM instances used to support this config. This service account must have permission to pull the specified container image. 
+                  If not set, VMs will run without a service account, in which case the image must be publicly accessible. 
+              - !ruby/object:Api::Type::Array
+                name: 'tags'
+                item_type: Api::Type::String
+                description: |
+                  Network tags to add to the Compute Engine machines backing the Workstations.
+              - !ruby/object:Api::Type::Integer
+                name: 'poolSize'
+                description: |
+                  Number of instances to pool for faster workstation starup.
+              - !ruby/object:Api::Type::Boolean
+                name: 'disablePublicIpAddresses'
+                description: |
+                  Whether instances have no public IP address.
+              - !ruby/object:Api::Type::NestedObject
+                name: 'shieldedInstanceConfig'
+                description: |
+                  A set of Compute Engine Shielded instance options.
+                properties:
+                  - !ruby/object:Api::Type::Boolean
+                    name: "enableSecureBoot"
+                    description: |
+                      Whether the instance has Secure Boot enabled.
+                  - !ruby/object:Api::Type::Boolean
+                    name: "enableVtpm"
+                    description: |
+                      Whether the instance has the vTPM enabled.
+                  - !ruby/object:Api::Type::Boolean
+                    name: "enableIntegrityMonitoring"
+                    description: |
+                      Whether the instance has integrity monitoring enabled.
+              - !ruby/object:Api::Type::NestedObject
+                name: 'confidentialInstanceConfig'
+                description: |
+                  A set of Compute Engine Confidential VM instance options.
+                properties:
+                  - !ruby/object:Api::Type::Boolean
+                    name: "enableConfidentialCompute"
+                    description: |
+                      Whether the instance has confidential compute enabled.
+              - !ruby/object:Api::Type::Integer
+                name: 'bootDiskSizeGb'
+                description: |
+                  Size of the boot disk in GB.
+      - !ruby/object:Api::Type::Array
+        name: 'persistentDirectories'
+        description: |
+          Directories to persist across workstation sessions.
+        item_type: !ruby/object:Api::Type::NestedObject
+          name: 'GceRegionalPersistentDisk'
+          description: 'A PersistentDirectory backed by a Compute Engine regional persistent disk.'
+          properties:
+            - !ruby/object:Api::Type::String
+              name: "mountPath"
+              description: |
+                Location of this directory in the running workstation.
+            - !ruby/object:Api::Type::NestedObject
+              name: 'gcePd'
+              description: |
+                  PersistentDirectory backed by a Compute Engine regional persistent disk.
+              properties:
+                - !ruby/object:Api::Type::Integer
+                  name: "sizeGb"
+                  description: |
+                    Size of the disk in GB. Must be empty if sourceSnapshot is set.
+                - !ruby/object:Api::Type::String
+                  name: "fsType"
+                  description: |
+                    Type of file system that the disk should be formatted with. The workstation image must support this file system type. 
+                - !ruby/object:Api::Type::String
+                  name: "diskType"
+                  description: |
+                    Type of the disk to use.
+                - !ruby/object:Api::Type::Enum
+                  name: 'reclaimPolicy'
+                  description: |
+                    What should happen to the disk after the workstation is deleted. Defaults to DELETE.
+                  values:
+                    - :RECLAIM_POLICY_UNSPECIFIED
+                    - :DELETE
+                    - :RETAIN
+      - !ruby/object:Api::Type::NestedObject
+        name: 'container'
+        description: |
+          Container that will be run for each workstation using this configuration when that workstation is started.
+        properties:
+          - !ruby/object:Api::Type::String
+            name: "image"
+            description: |
+              Docker image defining the container. This image must be accessible by the config's service account.
+          - !ruby/object:Api::Type::Array
+            name: 'command'
+            item_type: Api::Type::String
+            description: |
+              If set, overrides the default ENTRYPOINT specified by the image.
+          - !ruby/object:Api::Type::Array
+            name: 'args'
+            item_type: Api::Type::String
+            description: |
+              Arguments passed to the entrypoint.
+          - !ruby/object:Api::Type::KeyValuePairs
+            name: 'env'
+            description: |
+              Environment variables passed to the container.
+          - !ruby/object:Api::Type::String
+            name: "workingDir"
+            description: |
+              If set, overrides the default DIR specified by the image.
+          - !ruby/object:Api::Type::Integer
+            name: "runAsUser"
+            description: |
+              If set, overrides the USER specified in the image with the given uid.
+      - !ruby/object:Api::Type::Boolean
+        name: 'degraded'
+        description: |
+          Output only. Whether this resource is in degraded mode, in which case it may require user action to restore full functionality.
+          Details can be found in the conditions field.
+        output: true
+      - !ruby/object:Api::Type::Array
+        name: 'conditions'
+        output: true
+        description: |
+          Output only. Status conditions describing the current resource state.
+        item_type: !ruby/object:Api::Type::NestedObject
+          name: 'status'
+          description: 'Message containing a status code, status message, and details.'
+          properties:
+            - !ruby/object:Api::Type::Integer
+              name: 'code'
+              description: |
+                The status code.
+            - !ruby/object:Api::Type::String
+              name: 'message'
+              description: |
+                A developer-facing error message.
+            - !ruby/object:Api::Type::Array
+              name: 'details'
+              item_type: Api::Type::String
+              description: |
+                A list of messages that carry the details.   
+  - !ruby/object:Api::Resource
+    name: 'Workstations'
+    base_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{clusterName}}/workstationConfigs/{{configName}}
+    create_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{clusterName}}/workstationConfigs/{{configName}}/workstations??workstationId={{name}}
+    update_verb: :PATCH
+    description: |
+      A single instance of a developer workstation with its own persistent storage.
+    references: !ruby/object:Api::Resource::ReferenceLinks
+      api: 'https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.locations.workstationClusters.workstationConfigs.workstations'
+    parameters:
+      - !ruby/object:Api::Type::String
+        name: 'location'
+        description: 'The [Cloud Workstation location](https://cloud.google.com/workstations/docs/locations) for the workstation.'
+        input: true
+        url_param_only: true
+    properties:
+      - !ruby/object:Api::Type::String
+        name: 'name'
+        description: |
+          Full name of this resource.
+        input: true
+        required: true
+      - !ruby/object:Api::Type::String
+        name: 'displayName'
+        description: |
+          Human-readable name for this resource.
+        input: true
+        required: true
+      - !ruby/object:Api::Type::String
+        name: 'uid'
+        description: |
+          Output only. A system-assigned unique identified for this resource.
+        output: true
+      - !ruby/object:Api::Type::Boolean
+        name: 'reconciling'
+        description: |
+          Output only. Indicates whether this resource is currently being updated to match its intended state.
+        output: true
+      - !ruby/object:Api::Type::KeyValuePairs
+        name: 'annotations'
+        description: |
+          Client-specified annotations.
+      - !ruby/object:Api::Type::KeyValuePairs
+        name: 'labels'
+        description: |
+          Client-specified labels that are applied to the resource and that are also propagated to the underlying 
+          Compute Engine resources.
+      - !ruby/object:Api::Type::String
+        name: 'createTime'
+        description: |
+          Output only. Time when this resource was created.
+        output: true
+      - !ruby/object:Api::Type::String
+        name: 'updateTime'
+        description: |
+          Output only. Time when this resource was most recently updated.
+        output: true
+      - !ruby/object:Api::Type::String
+        name: 'deleteTime'
+        description: |
+          Output only. Time when this resource was soft-deleted.
+        output: true
+      - !ruby/object:Api::Type::String
+        name: 'etag'
+        description: |
+          Checksum computed by the server. 
+          May be sent on update and delete requests to ensure that the client has an up-to-date value before proceeding.
+      - !ruby/object:Api::Type::Enum
+        name: 'reclaimPolicy'
+        description: |
+          Output only. Current state of the workstation.
+        output: true
+        values:
+          - :STATE_UNSPECIFIED
+          - :STATE_STARTING
+          - :STATE_RUNNING  
+          - :STATE_STOPPING 
+          - :STATE_STOPPED 
+      - !ruby/object:Api::Type::String
+        name: 'host'
+        description: |
+          Output only. Host to which clients can send HTTPS traffic that will be received by the workstation. 
+          Authorized traffic will be received to the workstation as HTTP on port 80. To send traffic to a different port, 
+          clients may prefix the host with the destination port in the format "{port}-{host}".
+      
+  #- !ruby/object:Api::Resource
+  #  name: 'Database'
