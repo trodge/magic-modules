@@ -155,8 +155,8 @@ objects:
                 A list of messages that carry the details.   
   - !ruby/object:Api::Resource
     name: 'WorkstationConfigs'
-    base_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{clusterName}}/workstationConfigs/{{name}}
-    create_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{clusterName}}/workstationConfigs?workstationConfigId={{name}}
+    base_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{workstationClusterId}}/workstationConfigs/{{name}}
+    create_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{workstationClusterId}}/workstationConfigs?workstationConfigId={{name}}
     update_verb: :PATCH
     description: |
       A set of configuration options describing how a workstation will be run. 
@@ -164,6 +164,13 @@ objects:
     references: !ruby/object:Api::Resource::ReferenceLinks
       api: 'https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.locations.workstationClusters.workstationConfigs'
     parameters:
+      - !ruby/object:Api::Type::String
+        name: "workstationClusterId"
+        input: true
+        required: true
+        url_param_only: true
+        description: |
+          The name of the Workstation Cluster associated with this Workstation Config.
       - !ruby/object:Api::Type::String
         name: 'location'
         description: 'The [Cloud Workstation location](https://cloud.google.com/workstations/docs/locations) for the cluster config.'
@@ -392,8 +399,8 @@ objects:
                 A list of messages that carry the details.   
   - !ruby/object:Api::Resource
     name: 'Workstations'
-    base_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{clusterName}}/workstationConfigs/{{configName}}
-    create_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{clusterName}}/workstationConfigs/{{configName}}/workstations??workstationId={{name}}
+    base_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{workstationClusterId}}/workstationConfigs/{{workstationConfigId}}
+    create_url: projects/{{project}}/locations/{{location}}/workstationClusters/{{workstationClusterId}/workstationConfigs/{{workstationConfigId}}/workstations??workstationId={{name}}
     update_verb: :PATCH
     description: |
       A single instance of a developer workstation with its own persistent storage.
