@@ -1,0 +1,21 @@
+resource "google_cloud_workstations_workstation_clusters" "<%= ctx[:primary_resource_id] %>" {
+  provider               = google-beta
+  location               = "us-central1"
+  name = "<%= ctx[:vars]['cluster_name'] %>"
+  network                = google_compute_network.network.id
+  subnetwork             = google_compute_subnetwork.subnetwork.id
+}
+
+resource "google_compute_network" "network" {
+  provider                = google-beta
+  name                    = "<%= ctx[:vars]['cluster_name'] %>"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "subnetwork" {
+  provider      = google-beta
+  name          = "<%= ctx[:vars]['cluster_name'] %>"
+  ip_cidr_range = "10.0.0.0/24"
+  region        = "us-central1"
+  network       = google_compute_network.network.name
+}
