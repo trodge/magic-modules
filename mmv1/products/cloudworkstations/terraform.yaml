@@ -18,6 +18,19 @@ overrides: !ruby/object:Overrides::ResourceOverrides
     id_format: projects/{{project}}/locations/{{location}}//workstationClusters/{{name}}
     base_url: projects/{{project}}/locations/{{location}}/workstationClusters
     import_format: ["projects/{{project}}/locations/{{location}}/workstationClusters/{{name}}"]
+    examples:
+      - !ruby/object:Provider::Terraform::Examples
+        name: "cloud_workstation_cluster_basic"
+        primary_resource_id: "basic_cluster"
+        primary_resource_name: "fmt.Sprintf(\"tf-test-my-instance%s\", context[\"random_suffix\"])"
+        vars:
+          cluster_name: "my-cluster"
+      - !ruby/object:Provider::Terraform::Examples
+        name: "cloud_workstation_cluster_full"
+        primary_resource_id: "full_cluster"
+        primary_resource_name: "fmt.Sprintf(\"tf-test-my-instance%s\", context[\"random_suffix\"])"
+        vars:
+          cluster_name: "my-cluster"
     properties:
       etag: !ruby/object:Overrides::Terraform::PropertyOverride
         default_from_api: true
@@ -26,6 +39,7 @@ overrides: !ruby/object:Overrides::ResourceOverrides
         description: |
           Output only. Status conditions describing the current resource state.
         default_from_api: true
+
 # This is for copying files over
 files: !ruby/object:Provider::Config::Files
   # These files have templating (ERB) code that will be run.
