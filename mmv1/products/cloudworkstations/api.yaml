@@ -174,4 +174,4 @@ objects:
               item_type: Api::Type::String
               description: |
                 A list of messages that carry the details.
-  
+
