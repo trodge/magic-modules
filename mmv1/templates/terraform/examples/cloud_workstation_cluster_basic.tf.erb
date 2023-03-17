@@ -2,6 +2,7 @@ resource "google_cloud_workstations_workstation_clusters" "<%= ctx[:primary_reso
   provider               = google-beta
   location               = "us-central1"
   name = "<%= ctx[:vars]['cluster_name'] %>"
+  displayName = "<%= ctx[:vars]['cluster_name'] %>_display"
   network                = google_compute_network.network.id
   subnetwork             = google_compute_subnetwork.subnetwork.id
 }
