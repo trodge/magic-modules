@@ -93,7 +93,7 @@ objects:
       - !ruby/object:Api::Type::KeyValuePairs
         name: 'labels'
         description: |
-          Client-specified labels that are applied to the resource and that are also propagated to the underlying 
+          Client-specified labels that are applied to the resource and that are also propagated to the underlying
           Compute Engine resources.
       - !ruby/object:Api::Type::String
         name: 'createTime'
@@ -113,7 +113,7 @@ objects:
       - !ruby/object:Api::Type::String
         name: 'etag'
         description: |
-          Checksum computed by the server. 
+          Checksum computed by the server.
           May be sent on update and delete requests to ensure that the client has an up-to-date value before proceeding.
       - !ruby/object:Api::Type::String
         name: 'network'
@@ -122,7 +122,7 @@ objects:
       - !ruby/object:Api::Type::String
         name: 'subnetwork'
         description: |
-          Name of the Compute Engine subnetwork in which instances associated with this cluster will be created. 
+          Name of the Compute Engine subnetwork in which instances associated with this cluster will be created.
           Must be part of the subnetwork specified for this cluster
       - !ruby/object:Api::Type::NestedObject
         name: 'privateClusterConfig'
@@ -136,16 +136,16 @@ objects:
             name: 'clusterHostname'
             output: true
             description: |
-              Output only. Hostname for the workstation cluster. 
-              This field will be populated only when private endpoint is enabled. To access workstations in the cluster, 
-              create a new DNS zone mapping this domain name to an internal IP address and a forwarding rule mapping that 
+              Output only. Hostname for the workstation cluster.
+              This field will be populated only when private endpoint is enabled. To access workstations in the cluster,
+              create a new DNS zone mapping this domain name to an internal IP address and a forwarding rule mapping that
               address to the service attachment.
           - !ruby/object:Api::Type::String
             name: 'serviceAttachmentUri'
             output: true
             description: |
-              Output only. Service attachment URI for the workstation cluster. The service attachemnt is created when private endpoint is enabled. 
-              To access workstations in the cluster, configure access to the managed service using (Private Service Connect)[https://cloud.google.com/vpc/docs/configure-private-service-connect-services].   
+              Output only. Service attachment URI for the workstation cluster. The service attachemnt is created when private endpoint is enabled.
+              To access workstations in the cluster, configure access to the managed service using (Private Service Connect)[https://cloud.google.com/vpc/docs/configure-private-service-connect-services].
       - !ruby/object:Api::Type::Boolean
         name: 'degraded'
         description: |
@@ -173,5 +173,5 @@ objects:
               name: 'details'
               item_type: Api::Type::String
               description: |
-                A list of messages that carry the details.   
+                A list of messages that carry the details.
   

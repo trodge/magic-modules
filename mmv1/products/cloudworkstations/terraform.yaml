@@ -14,7 +14,7 @@
 --- !ruby/object:Provider::Terraform::Config
 overrides: !ruby/object:Overrides::ResourceOverrides
   WorkstationClusters:  !ruby/object:Overrides::Terraform::ResourceOverride
-    autogen_async: true 
+    autogen_async: true
     id_format: projects/{{project}}/locations/{{location}}//workstationClusters/{{name}}
     base_url: projects/{{project}}/locations/{{location}}/workstationClusters
     import_format: ["projects/{{project}}/locations/{{location}}/workstationClusters/{{name}}"]
@@ -25,12 +25,16 @@ overrides: !ruby/object:Overrides::ResourceOverrides
         primary_resource_name: "fmt.Sprintf(\"tf-test-my-instance%s\", context[\"random_suffix\"])"
         vars:
           cluster_name: "my-cluster"
+          network_name: "cloudworkstation-basic-network"
+          subnetwork_name: "cloudworkstation-basic-subnetwork"
       - !ruby/object:Provider::Terraform::Examples
         name: "cloud_workstation_cluster_full"
         primary_resource_id: "full_cluster"
         primary_resource_name: "fmt.Sprintf(\"tf-test-my-instance%s\", context[\"random_suffix\"])"
         vars:
           cluster_name: "my-cluster"
+          network_name: "cloudworkstation-full-network"
+          subnetwork_name: "cloudworkstation-full-subnetwork"
     properties:
       etag: !ruby/object:Overrides::Terraform::PropertyOverride
         default_from_api: true
