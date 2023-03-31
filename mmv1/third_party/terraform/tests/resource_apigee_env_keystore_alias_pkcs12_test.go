@@ -51,8 +51,8 @@ resource "google_project_service" "apigee" {
 }
 
 resource "google_project_service" "servicenetworking" {
-  project = google_project.project.project_id
-  service = "servicenetworking.googleapis.com"
+  project    = google_project.project.project_id
+  service    = "servicenetworking.googleapis.com"
   depends_on = [google_project_service.apigee]
 }
 
@@ -107,13 +107,13 @@ resource "google_apigee_env_keystore" "apigee_environment_keystore_alias" {
 }
 
 resource "google_apigee_env_keystore_alias_pkcs12" "apigee_environment_keystore_aliases_pkcs" {
-  environment 			= google_apigee_environment.apigee_environment_keystore.name
-  org_id				= google_apigee_organization.apigee_org.name
-  keystore				= google_apigee_env_keystore.apigee_environment_keystore_alias.name
-  alias                 = "tf-test%{random_suffix}"
-  file                  = "./test-fixtures/apigee/keyStore.p12"
-  filehash				= filemd5("./test-fixtures/apigee/keyStore.p12")
-  password              = sensitive("abcd")
+  environment = google_apigee_environment.apigee_environment_keystore.name
+  org_id      = google_apigee_organization.apigee_org.name
+  keystore    = google_apigee_env_keystore.apigee_environment_keystore_alias.name
+  alias       = "tf-test%{random_suffix}"
+  file        = "./test-fixtures/apigee/keyStore.p12"
+  filehash    = filemd5("./test-fixtures/apigee/keyStore.p12")
+  password    = sensitive("abcd")
 }
 `, context)
 }
