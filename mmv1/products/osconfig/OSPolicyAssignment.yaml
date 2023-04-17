@@ -1,0 +1,1002 @@
+# Copyright 2023 Google Inc.
+# Licensed under the Apache License, Version 2.0 (the License);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+--- !ruby/object:Api::Resource
+name: OSPolicyAssignment
+base_url: projects/{{project}}/locations/{{location}}/osPolicyAssignments
+create_url: projects/{{project}}/locations/{{location}}/osPolicyAssignments?osPolicyAssignmentId={{name}}
+self_link: projects/{{project}}/locations/{{location}}/osPolicyAssignments/{{name}}
+update_verb: :PATCH
+update_mask: true
+references: !ruby/object:Api::Resource::ReferenceLinks
+  guides:
+    'Official Documentation': 'https://cloud.google.com/compute/docs/os-configuration-management/create-os-policy-assignment'
+  api: 'https://cloud.google.com/compute/docs/osconfig/rest/v1/projects.locations.osPolicyAssignments'
+description: 'OS policy assignment is an API resource that is used to apply a
+  set of OS policies to a dynamically targeted group of Compute Engine VM
+  instances.
+
+  An OS policy is used to define the desired state configuration for a Compute
+  Engine VM instance through a set of configuration resources that provide
+  capabilities such as installing or removing software packages, or executing a
+  script.
+
+  For more information about the OS policy resource definitions and examples,
+  see [OS policy and OS policy
+  assignment](https://cloud.google.com/compute/docs/os-configuration-management/working-with-os-policies).'
+async: !ruby/object:Api::OpAsync
+  operation: !ruby/object:Api::OpAsync::Operation
+    path: 'name'
+    base_url: '{{op_id}}'
+    wait_ms: 1000
+  result: !ruby/object:Api::OpAsync::Result
+    path: 'response'
+    resource_inside_response: true
+  status: !ruby/object:Api::OpAsync::Status
+    path: 'done'
+    complete: true
+    allowed:
+      - true
+      - false
+  error: !ruby/object:Api::OpAsync::Error
+    path: 'error/errors'
+    message: 'message'
+autogen_async: true
+custom_code: !ruby/object:Provider::Terraform::CustomCode
+  custom_create: templates/terraform/custom_create/os_config_os_policy_assignment.go
+  custom_update: templates/terraform/custom_update/os_config_os_policy_assignment.go
+  custom_delete: templates/terraform/custom_delete/os_config_os_policy_assignment.go
+examples:
+  - !ruby/object:Provider::Terraform::Examples
+    name: "os_config_os_policy_assignment_basic"
+    primary_resource_id: "os_policy_assignment"
+    vars:
+      assignment_name: "policy-assignment"
+virtual_fields:
+  - !ruby/object:Api::Type::Boolean
+    name: skip_await_rollout
+    description:
+      Set to true to skip awaiting rollout during resource creation and update.
+parameters:
+  - !ruby/object:Api::Type::String
+    name: location
+    description: The location for the resource
+    url_param_only: true
+    required: true
+    immutable: true
+properties:
+  - !ruby/object:Api::Type::String
+    name: name
+    description: Resource name.
+    required: true
+    immutable: true
+  - !ruby/object:Api::Type::String
+    name: description
+    description:
+      OS policy assignment description. Length of the description is limited to
+      1024 characters.
+  - !ruby/object:Api::Type::Array
+    name: osPolicies
+    description: List of OS policies to be applied to the VMs.
+    required: true
+    item_type: !ruby/object:Api::Type::NestedObject
+      name: osPolicy
+      description: List of OS policies to be applied to the VMs.
+      properties:
+        - !ruby/object:Api::Type::String
+          name: id
+          description: 'The id of the OS policy with the following restrictions:
+
+            * Must contain only lowercase letters, numbers, and hyphens.
+
+            * Must start with a letter.
+
+            * Must be between 1-63 characters.
+
+            * Must end with a number or a letter.
+
+            * Must be unique within the assignment.'
+          required: true
+        - !ruby/object:Api::Type::String
+          name: description
+          description:
+            Policy description. Length of the description is limited to 1024
+            characters.
+        - !ruby/object:Api::Type::Enum
+          name: mode
+          description: Policy mode
+          required: true
+          values:
+            - :MODE_UNSPECIFIED
+            - :VALIDATION
+            - :ENFORCEMENT
+        - !ruby/object:Api::Type::Array
+          name: resourceGroups
+          description: List of resource groups for the policy. For a particular
+            VM, resource groups are evaluated in the order specified and the
+            first resource group that is applicable is selected and the rest are
+            ignored.
+
+            If none of the resource groups are applicable for a VM, the VM is
+            considered to be non-compliant w.r.t this policy. This behavior can
+            be toggled by the flag `allow_no_resource_group_match`
+          required: true
+          item_type: !ruby/object:Api::Type::NestedObject
+            name: resourceGroup
+            description: List of resource groups for the policy. For a particular
+              VM, resource groups are evaluated in the order specified and the
+              first resource group that is applicable is selected and the rest are
+              ignored.
+
+              If none of the resource groups are applicable for a VM, the VM is
+              considered to be non-compliant w.r.t this policy. This behavior can
+              be toggled by the flag `allow_no_resource_group_match`
+            properties:
+              - !ruby/object:Api::Type::Array
+                name: inventoryFilters
+                description: "List of inventory filters for the resource group.
+
+                  The resources in this resource group are applied to the target
+                  VM if it satisfies at least one of the following inventory
+                  filters.
+
+                  For example, to apply this resource group to VMs running
+                  either `RHEL` or `CentOS` operating systems, specify 2 items
+                  for the list with following values:
+                  inventory_filters[0].os_short_name='rhel' and
+                  inventory_filters[1].os_short_name='centos'
+
+                  If the list is empty, this resource group will be applied to
+                  the target VM unconditionally."
+                item_type: !ruby/object:Api::Type::NestedObject
+                  name: inventoryFilter
+                  description: "List of inventory filters for the resource group.
+
+                    The resources in this resource group are applied to the target
+                    VM if it satisfies at least one of the following inventory
+                    filters.
+
+                    For example, to apply this resource group to VMs running
+                    either `RHEL` or `CentOS` operating systems, specify 2 items
+                    for the list with following values:
+                    inventory_filters[0].os_short_name='rhel' and
+                    inventory_filters[1].os_short_name='centos'
+
+                    If the list is empty, this resource group will be applied to
+                    the target VM unconditionally."
+                  properties:
+                    - !ruby/object:Api::Type::String
+                      name: osShortName
+                      description: The OS short name
+                      required: true
+                    - !ruby/object:Api::Type::String
+                      name: osVersion
+                      description: The OS version
+
+                        Prefix matches are supported if asterisk(*) is provided
+                        as the last character. For example, to match all
+                        versions with a major version of `7`, specify the
+                        following value for this field `7.*`
+
+                        An empty string matches all OS versions.
+              - !ruby/object:Api::Type::Array
+                name: resources
+                description:
+                  List of resources configured for this resource group. The
+                  resources are executed in the exact order specified here.
+                required: true
+                item_type: !ruby/object:Api::Type::NestedObject
+                  name: resource
+                  description:
+                    List of resources configured for this resource group. The
+                    resources are executed in the exact order specified here.
+                  properties:
+                    - !ruby/object:Api::Type::String
+                      name: id
+                      description: 'The id of the resource with the following
+                        restrictions:
+
+                        * Must contain only lowercase letters, numbers, and
+                        hyphens.
+
+                        * Must start with a letter.
+
+                        * Must be between 1-63 characters.
+
+                        * Must end with a number or a letter.
+
+                        * Must be unique within the OS policy.'
+                      required: true
+                    - !ruby/object:Api::Type::NestedObject
+                      name: pkg
+                      description: Package resource
+                      properties:
+                        - !ruby/object:Api::Type::Enum
+                          name: desiredState
+                          description:
+                            The desired state the agent should maintain for this
+                            package.
+                          required: true
+                          values:
+                            - :DESIRED_STATE_UNSPECIFIED
+                            - :INSTALLED
+                            - :REMOVED
+                        - !ruby/object:Api::Type::NestedObject
+                          name: apt
+                          description: A package managed by Apt.
+                          properties:
+                            - !ruby/object:Api::Type::String
+                              name: name
+                              description: Package name.
+                              required: true
+                        - !ruby/object:Api::Type::NestedObject
+                          name: deb
+                          description: A deb package file.
+                          properties:
+                            - !ruby/object:Api::Type::NestedObject
+                              name: source
+                              description: A deb package.
+                              required: true
+                              properties:
+                                - !ruby/object:Api::Type::NestedObject
+                                  name: remote
+                                  description: A generic remote file.
+                                  properties:
+                                    - !ruby/object:Api::Type::String
+                                      name: uri
+                                      description:
+                                        URI from which to fetch the object. It
+                                        should contain both the protocol and
+                                        path following the format
+                                        `{protocol}://{location}`.
+                                      required: true
+                                    - !ruby/object:Api::Type::String
+                                      name: sha256Checksum
+                                      description:
+                                        SHA256 checksum of the remote file.
+                                - !ruby/object:Api::Type::NestedObject
+                                  name: gcs
+                                  description: A Cloud Storage object.
+                                  properties:
+                                    - !ruby/object:Api::Type::String
+                                      name: bucket
+                                      description:
+                                        Bucket of the Cloud Storage object.
+                                      required: true
+                                    - !ruby/object:Api::Type::String
+                                      name: object
+                                      description:
+                                        Name of the Cloud Storage object.
+                                      required: true
+                                    - !ruby/object:Api::Type::Integer
+                                      name: generation
+                                      description:
+                                        Generation number of the Cloud Storage
+                                        object.
+                                - !ruby/object:Api::Type::String
+                                  name: localPath
+                                  description:
+                                    A local path within the VM to use.
+                                - !ruby/object:Api::Type::Boolean
+                                  name: allowInsecure
+                                  description: 'Defaults to false. When false,
+                                    files are subject to validations based on
+                                    the file type:
+
+                                    Remote: A checksum must be specified. Cloud
+                                    Storage: An object generation number must be
+                                    specified.'
+                            - !ruby/object:Api::Type::Boolean
+                              name: pullDeps
+                              description:
+                                'Whether dependencies should also be installed.
+                                - install when false: `dpkg -i package` -
+                                install when true: `apt-get update && apt-get -y
+                                install package.deb`'
+                        - !ruby/object:Api::Type::NestedObject
+                          name: yum
+                          description: A package managed by YUM.
+                          properties:
+                            - !ruby/object:Api::Type::String
+                              name: name
+                              description: Package name.
+                              required: true
+                        - !ruby/object:Api::Type::NestedObject
+                          name: zypper
+                          description: A package managed by Zypper.
+                          properties:
+                            - !ruby/object:Api::Type::String
+                              name: name
+                              description: Package name.
+                              required: true
+                        - !ruby/object:Api::Type::NestedObject
+                          name: rpm
+                          description: An rpm package file.
+                          properties:
+                            - !ruby/object:Api::Type::NestedObject
+                              name: source
+                              description: An rpm package.
+                              required: true
+                              properties:
+                                - !ruby/object:Api::Type::NestedObject
+                                  name: remote
+                                  description: A generic remote file.
+                                  properties:
+                                    - !ruby/object:Api::Type::String
+                                      name: uri
+                                      description:
+                                        URI from which to fetch the object. It
+                                        should contain both the protocol and
+                                        path following the format
+                                        `{protocol}://{location}`.
+                                      required: true
+                                    - !ruby/object:Api::Type::String
+                                      name: sha256Checksum
+                                      description:
+                                        SHA256 checksum of the remote file.
+                                - !ruby/object:Api::Type::NestedObject
+                                  name: gcs
+                                  description: A Cloud Storage object.
+                                  properties:
+                                    - !ruby/object:Api::Type::String
+                                      name: bucket
+                                      description:
+                                        Bucket of the Cloud Storage object.
+                                      required: true
+                                    - !ruby/object:Api::Type::String
+                                      name: object
+                                      description:
+                                        Name of the Cloud Storage object.
+                                      required: true
+                                    - !ruby/object:Api::Type::Integer
+                                      name: generation
+                                      description:
+                                        Generation number of the Cloud Storage
+                                        object.
+                                - !ruby/object:Api::Type::String
+                                  name: localPath
+                                  description:
+                                    A local path within the VM to use.
+                                - !ruby/object:Api::Type::Boolean
+                                  name: allowInsecure
+                                  description: 'Defaults to false. When false,
+                                    files are subject to validations based on
+                                    the file type:
+
+                                    Remote: A checksum must be specified. Cloud
+                                    Storage: An object generation number must be
+                                    specified.'
+                            - !ruby/object:Api::Type::Boolean
+                              name: pullDeps
+                              description:
+                                'Whether dependencies should also be installed.
+                                - install when false: `rpm --upgrade
+                                --replacepkgs package.rpm` - install when true:
+                                `yum -y install package.rpm` or `zypper -y
+                                install package.rpm`'
+                        - !ruby/object:Api::Type::NestedObject
+                          name: googet
+                          description: A package managed by GooGet.
+                          properties:
+                            - !ruby/object:Api::Type::String
+                              name: name
+                              description: Package name.
+                              required: true
+                        - !ruby/object:Api::Type::NestedObject
+                          name: msi
+                          description: An MSI package.
+                          properties:
+                            - !ruby/object:Api::Type::NestedObject
+                              name: source
+                              description: The MSI package.
+                              required: true
+                              properties:
+                                - !ruby/object:Api::Type::NestedObject
+                                  name: remote
+                                  description: A generic remote file.
+                                  properties:
+                                    - !ruby/object:Api::Type::String
+                                      name: uri
+                                      description:
+                                        URI from which to fetch the object. It
+                                        should contain both the protocol and
+                                        path following the format
+                                        `{protocol}://{location}`.
+                                      required: true
+                                    - !ruby/object:Api::Type::String
+                                      name: sha256Checksum
+                                      description:
+                                        SHA256 checksum of the remote file.
+                                - !ruby/object:Api::Type::NestedObject
+                                  name: gcs
+                                  description: A Cloud Storage object.
+                                  properties:
+                                    - !ruby/object:Api::Type::String
+                                      name: bucket
+                                      description:
+                                        Bucket of the Cloud Storage object.
+                                      required: true
+                                    - !ruby/object:Api::Type::String
+                                      name: object
+                                      description:
+                                        Name of the Cloud Storage object.
+                                      required: true
+                                    - !ruby/object:Api::Type::Integer
+                                      name: generation
+                                      description:
+                                        Generation number of the Cloud Storage
+                                        object.
+                                - !ruby/object:Api::Type::String
+                                  name: localPath
+                                  description:
+                                    A local path within the VM to use.
+                                - !ruby/object:Api::Type::Boolean
+                                  name: allowInsecure
+                                  description: 'Defaults to false. When false,
+                                    files are subject to validations based on
+                                    the file type:
+
+                                    Remote: A checksum must be specified. Cloud
+                                    Storage: An object generation number must be
+                                    specified.'
+                            - !ruby/object:Api::Type::Array
+                              name: properties
+                              description:
+                                Additional properties to use during
+                                installation. This should be in the format of
+                                Property=Setting. Appended to the defaults of
+                                `ACTION=INSTALL REBOOT=ReallySuppress`.
+                              item_type: Api::Type::String
+                    - !ruby/object:Api::Type::NestedObject
+                      name: repository
+                      description: Package repository resource
+                      properties:
+                        - !ruby/object:Api::Type::NestedObject
+                          name: apt
+                          description: An Apt Repository.
+                          properties:
+                            - !ruby/object:Api::Type::Enum
+                              name: archiveType
+                              description:
+                                Type of archive files in this repository.
+                              required: true
+                              values:
+                                - :ARCHIVE_TYPE_UNSPECIFIED
+                                - :DEB
+                                - :DEB_SRC
+                            - !ruby/object:Api::Type::String
+                              name: uri
+                              description: URI for this repository.
+                              required: true
+                            - !ruby/object:Api::Type::String
+                              name: distribution
+                              description: Distribution of this repository.
+                              required: true
+                            - !ruby/object:Api::Type::Array
+                              name: components
+                              description:
+                                List of components for this repository. Must
+                                contain at least one item.
+                              required: true
+                              item_type: Api::Type::String
+                            - !ruby/object:Api::Type::String
+                              name: gpgKey
+                              description:
+                                URI of the key file for this repository. The
+                                agent maintains a keyring at
+                                `/etc/apt/trusted.gpg.d/osconfig_agent_managed.gpg`.
+                        - !ruby/object:Api::Type::NestedObject
+                          name: yum
+                          description: A Yum Repository.
+                          properties:
+                            - !ruby/object:Api::Type::String
+                              name: id
+                              description:
+                                A one word, unique name for this repository.
+                                This is the `repo id` in the yum config file and
+                                also the `display_name` if `display_name` is
+                                omitted. This id is also used as the unique
+                                identifier when checking for resource conflicts.
+                              required: true
+                            - !ruby/object:Api::Type::String
+                              name: displayName
+                              description: The display name of the repository.
+                            - !ruby/object:Api::Type::String
+                              name: baseUrl
+                              description:
+                                The location of the repository directory.
+                              required: true
+                            - !ruby/object:Api::Type::Array
+                              name: gpgKeys
+                              description: URIs of GPG keys.
+                              item_type: Api::Type::String
+                        - !ruby/object:Api::Type::NestedObject
+                          name: zypper
+                          description: A Zypper Repository.
+                          properties:
+                            - !ruby/object:Api::Type::String
+                              name: id
+                              description:
+                                A one word, unique name for this repository.
+                                This is the `repo id` in the zypper config file
+                                and also the `display_name` if `display_name` is
+                                omitted. This id is also used as the unique
+                                identifier when checking for GuestPolicy
+                                conflicts.
+                              required: true
+                            - !ruby/object:Api::Type::String
+                              name: displayName
+                              description: The display name of the repository.
+                            - !ruby/object:Api::Type::String
+                              name: baseUrl
+                              description:
+                                The location of the repository directory.
+                              required: true
+                            - !ruby/object:Api::Type::Array
+                              name: gpgKeys
+                              description: URIs of GPG keys.
+                              item_type: Api::Type::String
+                        - !ruby/object:Api::Type::NestedObject
+                          name: goo
+                          description: A Goo Repository.
+                          properties:
+                            - !ruby/object:Api::Type::String
+                              name: name
+                              description: The name of the repository.
+                              required: true
+                            - !ruby/object:Api::Type::String
+                              name: url
+                              description: The url of the repository.
+                              required: true
+                    - !ruby/object:Api::Type::NestedObject
+                      name: exec
+                      description: Exec resource
+                      properties:
+                        - !ruby/object:Api::Type::NestedObject
+                          name: validate
+                          description:
+                            What to run to validate this resource is in the
+                            desired state. An exit code of 100 indicates "in
+                            desired state", and exit code of 101 indicates "not
+                            in desired state". Any other exit code indicates a
+                            failure running validate.
+                          required: true
+                          properties:
+                            - !ruby/object:Api::Type::NestedObject
+                              name: file
+                              description: A remote or local file.
+                              properties:
+                                - !ruby/object:Api::Type::NestedObject
+                                  name: remote
+                                  description: A generic remote file.
+                                  properties:
+                                    - !ruby/object:Api::Type::String
+                                      name: uri
+                                      description:
+                                        URI from which to fetch the object. It
+                                        should contain both the protocol and
+                                        path following the format
+                                        `{protocol}://{location}`.
+                                      required: true
+                                    - !ruby/object:Api::Type::String
+                                      name: sha256Checksum
+                                      description:
+                                        SHA256 checksum of the remote file.
+                                - !ruby/object:Api::Type::NestedObject
+                                  name: gcs
+                                  description: A Cloud Storage object.
+                                  properties:
+                                    - !ruby/object:Api::Type::String
+                                      name: bucket
+                                      description:
+                                        Bucket of the Cloud Storage object.
+                                      required: true
+                                    - !ruby/object:Api::Type::String
+                                      name: object
+                                      description:
+                                        Name of the Cloud Storage object.
+                                      required: true
+                                    - !ruby/object:Api::Type::Integer
+                                      name: generation
+                                      description:
+                                        Generation number of the Cloud Storage
+                                        object.
+                                - !ruby/object:Api::Type::String
+                                  name: localPath
+                                  description:
+                                    A local path within the VM to use.
+                                - !ruby/object:Api::Type::Boolean
+                                  name: allowInsecure
+                                  description: 'Defaults to false. When false,
+                                    files are subject to validations based on
+                                    the file type:
+
+                                    Remote: A checksum must be specified. Cloud
+                                    Storage: An object generation number must be
+                                    specified.'
+                            - !ruby/object:Api::Type::String
+                              name: script
+                              description:
+                                An inline script. The size of the script is
+                                limited to 1024 characters.
+                            - !ruby/object:Api::Type::Array
+                              name: args
+                              description:
+                                Optional arguments to pass to the source during
+                                execution.
+                              item_type: Api::Type::String
+                            - !ruby/object:Api::Type::Enum
+                              name: interpreter
+                              description: The script interpreter to use.
+                              required: true
+                              values:
+                                - :INTERPRETER_UNSPECIFIED
+                                - :NONE
+                                - :SHELL
+                                - :POWERSHELL
+                            - !ruby/object:Api::Type::String
+                              name: outputFilePath
+                              description:
+                                Only recorded for enforce Exec. Path to an
+                                output file (that is created by this Exec) whose
+                                content will be recorded in
+                                OSPolicyResourceCompliance after a successful
+                                run. Absence or failure to read this file will
+                                result in this ExecResource being non-compliant.
+                                Output file size is limited to 100K bytes.
+                        - !ruby/object:Api::Type::NestedObject
+                          name: enforce
+                          description:
+                            What to run to bring this resource into the desired
+                            state. An exit code of 100 indicates "success", any
+                            other exit code indicates a failure running enforce.
+                          properties:
+                            - !ruby/object:Api::Type::NestedObject
+                              name: file
+                              description: A remote or local file.
+                              properties:
+                                - !ruby/object:Api::Type::NestedObject
+                                  name: remote
+                                  description: A generic remote file.
+                                  properties:
+                                    - !ruby/object:Api::Type::String
+                                      name: uri
+                                      description:
+                                        URI from which to fetch the object. It
+                                        should contain both the protocol and
+                                        path following the format
+                                        `{protocol}://{location}`.
+                                      required: true
+                                    - !ruby/object:Api::Type::String
+                                      name: sha256Checksum
+                                      description:
+                                        SHA256 checksum of the remote file.
+                                - !ruby/object:Api::Type::NestedObject
+                                  name: gcs
+                                  description: A Cloud Storage object.
+                                  properties:
+                                    - !ruby/object:Api::Type::String
+                                      name: bucket
+                                      description:
+                                        Bucket of the Cloud Storage object.
+                                      required: true
+                                    - !ruby/object:Api::Type::String
+                                      name: object
+                                      description:
+                                        Name of the Cloud Storage object.
+                                      required: true
+                                    - !ruby/object:Api::Type::Integer
+                                      name: generation
+                                      description:
+                                        Generation number of the Cloud Storage
+                                        object.
+                                - !ruby/object:Api::Type::String
+                                  name: localPath
+                                  description:
+                                    A local path within the VM to use.
+                                - !ruby/object:Api::Type::Boolean
+                                  name: allowInsecure
+                                  description:
+                                    'Defaults to false. When false, files are
+                                    subject to validations based on the file
+                                    type: Remote: A checksum must be specified.
+                                    Cloud Storage: An object generation number
+                                    must be specified.'
+                            - !ruby/object:Api::Type::String
+                              name: script
+                              description:
+                                An inline script. The size of the script is
+                                limited to 1024 characters.
+                            - !ruby/object:Api::Type::Array
+                              name: args
+                              description:
+                                Optional arguments to pass to the source during
+                                execution.
+                              item_type: Api::Type::String
+                            - !ruby/object:Api::Type::Enum
+                              name: interpreter
+                              description: The script interpreter to use.
+                              required: true
+                              values:
+                                - :INTERPRETER_UNSPECIFIED
+                                - :NONE
+                                - :SHELL
+                                - :POWERSHELL
+                            - !ruby/object:Api::Type::String
+                              name: outputFilePath
+                              description:
+                                Only recorded for enforce Exec. Path to an
+                                output file (that is created by this Exec) whose
+                                content will be recorded in
+                                OSPolicyResourceCompliance after a successful
+                                run. Absence or failure to read this file will
+                                result in this ExecResource being non-compliant.
+                                Output file size is limited to 100K bytes.
+                    - !ruby/object:Api::Type::NestedObject
+                      name: file
+                      description: File resource
+                      properties:
+                        - !ruby/object:Api::Type::NestedObject
+                          name: file
+                          description: A remote or local source.
+                          properties:
+                            - !ruby/object:Api::Type::NestedObject
+                              name: remote
+                              description: A generic remote file.
+                              properties:
+                                - !ruby/object:Api::Type::String
+                                  name: uri
+                                  description:
+                                    URI from which to fetch the object. It
+                                    should contain both the protocol and path
+                                    following the format
+                                    `{protocol}://{location}`.
+                                  required: true
+                                - !ruby/object:Api::Type::String
+                                  name: sha256Checksum
+                                  description:
+                                    SHA256 checksum of the remote file.
+                            - !ruby/object:Api::Type::NestedObject
+                              name: gcs
+                              description: A Cloud Storage object.
+                              properties:
+                                - !ruby/object:Api::Type::String
+                                  name: bucket
+                                  description:
+                                    Bucket of the Cloud Storage object.
+                                  required: true
+                                - !ruby/object:Api::Type::String
+                                  name: object
+                                  description: Name of the Cloud Storage object.
+                                  required: true
+                                - !ruby/object:Api::Type::Integer
+                                  name: generation
+                                  description:
+                                    Generation number of the Cloud Storage
+                                    object.
+                            - !ruby/object:Api::Type::String
+                              name: localPath
+                              description: A local path within the VM to use.
+                            - !ruby/object:Api::Type::Boolean
+                              name: allowInsecure
+                              description:
+                                'Defaults to false. When false, files are
+                                subject to validations based on the file type:
+                                Remote: A checksum must be specified. Cloud
+                                Storage: An object generation number must be
+                                specified.'
+                        - !ruby/object:Api::Type::String
+                          name: content
+                          description:
+                            A a file with this content. The size of the content
+                            is limited to 1024 characters.
+                        - !ruby/object:Api::Type::String
+                          name: path
+                          description:
+                            The absolute path of the file within the VM.
+                          required: true
+                        - !ruby/object:Api::Type::Enum
+                          name: state
+                          description: Desired state of the file.
+                          required: true
+                          values:
+                            - :OS_POLICY_COMPLIANCE_STATE_UNSPECIFIED
+                            - :COMPLIANT
+                            - :NON_COMPLIANT
+                            - :UNKNOWN
+                            - :NO_OS_POLICIES_APPLICABLE
+                        - !ruby/object:Api::Type::String
+                          name: permissions
+                          description: 'Consists of three octal digits which
+                            represent, in order, the permissions of the owner,
+                            group, and other users for the file (similarly to
+                            the numeric mode used in the linux chmod utility).
+                            Each digit represents a three bit number with the 4
+                            bit corresponding to the read permissions, the 2 bit
+                            corresponds to the write bit, and the one bit
+                            corresponds to the execute permission. Default
+                            behavior is 755.
+
+                            Below are some examples of permissions and their
+                            associated values: read, write, and execute: 7 read
+                            and execute: 5 read and write: 6 read only: 4'
+                          output: true
+        - !ruby/object:Api::Type::Boolean
+          name: allowNoResourceGroupMatch
+          description:
+            This flag determines the OS policy compliance status when none of
+            the resource groups within the policy are applicable for a VM. Set
+            this value to `true` if the policy needs to be reported as compliant
+            even if the policy has nothing to validate or enforce.
+  - !ruby/object:Api::Type::NestedObject
+    name: instanceFilter
+    description: Filter to select VMs.
+    required: true
+    properties:
+      - !ruby/object:Api::Type::Boolean
+        name: all
+        description:
+          Target all VMs in the project. If true, no other criteria is
+          permitted.
+      - !ruby/object:Api::Type::Array
+        name: inclusionLabels
+        description: List of label sets used for VM inclusion.
+
+          If the list has more than one `LabelSet`, the VM is included if any of
+          the label sets are applicable for the VM.
+        item_type: !ruby/object:Api::Type::NestedObject
+          name: inclusionLabel
+          description: List of label sets used for VM inclusion.
+
+            If the list has more than one `LabelSet`, the VM is included if any of
+            the label sets are applicable for the VM.
+          properties:
+            - !ruby/object:Api::Type::KeyValuePairs
+              name: labels
+              description:
+                Labels are identified by key/value pairs in this map. A VM
+                should contain all the key/value pairs specified in this map to
+                be selected.
+      - !ruby/object:Api::Type::Array
+        name: exclusionLabels
+        description: List of label sets used for VM exclusion.
+
+          If the list has more than one label set, the VM is excluded if any of
+          the label sets are applicable for the VM.
+        item_type: !ruby/object:Api::Type::NestedObject
+          name: exclusionLabel
+          description: List of label sets used for VM exclusion.
+
+            If the list has more than one label set, the VM is excluded if any of
+            the label sets are applicable for the VM.
+          properties:
+            - !ruby/object:Api::Type::KeyValuePairs
+              name: labels
+              description:
+                Labels are identified by key/value pairs in this map. A VM
+                should contain all the key/value pairs specified in this map to
+                be selected.
+      - !ruby/object:Api::Type::Array
+        name: inventories
+        description: List of inventories to select VMs.
+
+          A VM is selected if its inventory data matches at least one of the
+          following inventories.
+        item_type: !ruby/object:Api::Type::NestedObject
+          name: inventory
+          description: List of inventories to select VMs.
+
+            A VM is selected if its inventory data matches at least one of the
+            following inventories.
+          properties:
+            - !ruby/object:Api::Type::String
+              name: osShortName
+              description: The OS short name
+              required: true
+            - !ruby/object:Api::Type::String
+              name: osVersion
+              description:
+                The OS version Prefix matches are supported if asterisk(*) is
+                provided as the last character. For example, to match all
+                versions with a major version of `7`, specify the following
+                value for this field `7.*` An empty string matches all OS
+                versions.
+  - !ruby/object:Api::Type::NestedObject
+    name: rollout
+    description:
+      'Rollout to deploy the OS policy assignment. A rollout is triggered in the
+      following situations: 1) OSPolicyAssignment is created. 2)
+      OSPolicyAssignment is updated and the update contains changes to one of
+      the following fields: - instance_filter - os_policies 3)
+      OSPolicyAssignment is deleted.'
+    required: true
+    properties:
+      - !ruby/object:Api::Type::NestedObject
+        name: disruptionBudget
+        description:
+          The maximum number (or percentage) of VMs per zone to disrupt at any
+          given moment.
+        required: true
+        properties:
+          - !ruby/object:Api::Type::Integer
+            name: fixed
+            description: Specifies a fixed value.
+          - !ruby/object:Api::Type::Integer
+            name: percent
+            description:
+              Specifies the relative value defined as a percentage, which will
+              be multiplied by a reference value.
+      - !ruby/object:Api::Type::String
+        name: minWaitDuration
+        description:
+          This determines the minimum duration of time to wait after the
+          configuration changes are applied through the current rollout. A VM
+          continues to count towards the `disruption_budget` at least until this
+          duration of time has passed after configuration changes are applied.
+        required: true
+  - !ruby/object:Api::Type::String
+    name: revisionId
+    description:
+      Output only. The assignment revision ID A new revision is committed
+      whenever a rollout is triggered for a OS policy assignment
+    output: true
+  - !ruby/object:Api::Type::String
+    name: revisionCreateTime
+    description: Output only. The timestamp that the revision was created.
+    output: true
+  - !ruby/object:Api::Type::String
+    name: etag
+    description:
+      The etag for this OS policy assignment. If this is provided on update, it
+      must match the server's etag.
+    output: true
+  - !ruby/object:Api::Type::Enum
+    name: rolloutState
+    description: Output only. OS policy assignment rollout state
+    output: true
+    values:
+      - :ROLLOUT_STATE_UNSPECIFIED
+      - :IN_PROGRESS
+      - :CANCELLING
+      - :CANCELLED
+      - :SUCCEEDED
+  - !ruby/object:Api::Type::Boolean
+    name: baseline
+    description: Output only. Indicates that this revision has been successfully
+      rolled out in this zone and new VMs will be assigned OS policies from this
+      revision.
+
+      For a given OS policy assignment, there is only one revision with a value
+      of `true` for this field.
+    output: true
+  - !ruby/object:Api::Type::Boolean
+    name: deleted
+    description:
+      Output only. Indicates that this revision deletes the OS policy
+      assignment.
+    output: true
+  - !ruby/object:Api::Type::Boolean
+    name: reconciling
+    description: 'Output only. Indicates that reconciliation is in progress for
+      the revision. This value is `true` when the `rollout_state` is one of:
+
+      * IN_PROGRESS
+
+      * CANCELLING'
+    output: true
+  - !ruby/object:Api::Type::String
+    name: uid
+    description:
+      Output only. Server generated unique id for the OS policy assignment
+      resource.
+    output: true
