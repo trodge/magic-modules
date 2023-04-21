@@ -97,6 +97,7 @@ properties:
     exactly_one_of:
       - allow
       - deny
+    send_empty_value: true
     item_type: !ruby/object:Api::Type::NestedObject
       properties:
         # IPProtocol has to be string, instead of Enum because user can
@@ -122,6 +123,7 @@ properties:
 
             Example inputs include: ["22"], ["80","443"], and
             ["12345-12349"].
+          send_empty_value: true
   - !ruby/object:Api::Type::Time
     name: 'creationTimestamp'
     description: 'Creation timestamp in RFC3339 text format.'
@@ -137,6 +139,7 @@ properties:
     description: |
       The list of DENY rules specified by this firewall. Each rule specifies
       a protocol and port-range tuple that describes a denied connection.
+    send_empty_value: true
     item_type: !ruby/object:Api::Type::NestedObject
       properties:
         # IPProtocol has to be string, instead of Enum because user can
@@ -162,6 +165,7 @@ properties:
 
             Example inputs include: ["22"], ["80","443"], and
             ["12345-12349"].
+          send_empty_value: true
   - !ruby/object:Api::Type::String
     name: 'description'
     description: |
@@ -175,6 +179,7 @@ properties:
       must be expressed in CIDR format. IPv4 or IPv6 ranges are supported.
     is_set: true
     default_from_api: true
+    send_empty_value: true
     item_type: Api::Type::String
   - !ruby/object:Api::Type::Enum
     name: 'direction'
@@ -261,6 +266,7 @@ properties:
       `source_ranges`, `source_tags` or `source_service_accounts` is required.
     is_set: true
     diff_suppress_func: 'diffSuppressSourceRanges'
+    send_empty_value: true
     item_type: Api::Type::String
   - !ruby/object:Api::Type::Array
     name: 'sourceServiceAccounts'
@@ -282,6 +288,7 @@ properties:
       - source_tags
       - target_tags
     is_set: true
+    send_empty_value: true
     item_type: Api::Type::String
   - !ruby/object:Api::Type::Array
     name: 'sourceTags'
@@ -300,6 +307,7 @@ properties:
       - source_service_accounts
       - target_service_accounts
     is_set: true
+    send_empty_value: true
     item_type: Api::Type::String
   - !ruby/object:Api::Type::Array
     name: 'targetServiceAccounts'
@@ -315,6 +323,7 @@ properties:
       - source_tags
       - target_tags
     is_set: true
+    send_empty_value: true
     item_type: Api::Type::String
   - !ruby/object:Api::Type::Array
     name: 'targetTags'
@@ -327,4 +336,5 @@ properties:
       - source_service_accounts
       - target_service_accounts
     is_set: true
+    send_empty_value: true
     item_type: Api::Type::String
