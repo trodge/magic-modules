@@ -588,6 +588,9 @@ func resource<%= resource_name -%>Update(d *schema.ResourceData, meta interface{
 	var project string
 <%    end -%>
 	config := meta.(*transport_tpg.Config)
+<%    if object.custom_code.custom_update -%>
+	<%= lines(compile(pwd + '/' + object.custom_code.custom_update)) -%>
+<%    else -%>
 	userAgent, err := generateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
@@ -595,55 +598,55 @@ func resource<%= resource_name -%>Update(d *schema.ResourceData, meta interface{
 
 	billingProject := ""
 
-<%    if has_project -%>
+<%      if has_project -%>
 	project, err := getProject(d, config)
 	if err != nil {
 		return fmt.Errorf("Error fetching project for <%= object.name -%>: %s", err)
 	}
 	billingProject = project
-<%    end -%>
+<%      end -%>
 
 
-<%    if !object.immutable -%>
+<%      if !object.immutable -%>
 	obj := make(map[string]interface{})
-<%      update_body_properties.each do |prop| -%>
+<%        update_body_properties.each do |prop| -%>
 	<%# flattened objects won't have something stored in state so instead nil is passed to the next expander. -%>
 	<% schemaPrefix = prop.flatten_object ? "nil" : "d.Get( \"#{prop.name.underscore}\" )" -%>
 	<%= prop.api_name -%>Prop, err := expand<%= "Nested" if object.nested_query -%><%= resource_name -%><%= titlelize_property(prop) -%>(<%= schemaPrefix -%>, d, config)
 	if err != nil {
 		return err
-<%        if prop.send_empty_value -%>
+<%          if prop.send_empty_value -%>
 	} else if v, ok := d.GetOkExists("<%= prop.name.underscore -%>"); ok || !reflect.DeepEqual(v, <%= prop.api_name -%>Prop) {
-<%        elsif prop.flatten_object -%>
+<%          elsif prop.flatten_object -%>
 	} else if !isEmptyValue(reflect.ValueOf(<%= prop.api_name -%>Prop)) {
-<%        else -%>
+<%          else -%>
 	} else if v, ok := d.GetOkExists("<%= prop.name.underscore -%>"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, <%= prop.api_name -%>Prop)) {
-<%        end -%>
+<%          end -%>
 		obj["<%= prop.api_name -%>"] = <%= prop.api_name -%>Prop
 	}
-<%      end -%>
+<%        end -%>
 
 <%#     We need to decide what encoder to use here - if there's an update encoder, use that! -%>
-<%      if object.custom_code.update_encoder -%>
+<%        if object.custom_code.update_encoder -%>
 	obj, err = resource<%= resource_name -%>UpdateEncoder(d, meta, obj)
 	if err != nil {
 		return err
 	}
-<%      elsif object.custom_code.encoder -%>
+<%        elsif object.custom_code.encoder -%>
 	obj, err = resource<%= resource_name -%>Encoder(d, meta, obj)
 	if err != nil {
 		return err
 	}
-<%      end -%>
+<%        end -%>
 
-<%      if object.mutex -%>
+<%        if object.mutex -%>
 	lockName, err := ReplaceVars(d, config, "<%= object.mutex -%>")
 	if err != nil {
 		return err
 	}
 	mutexKV.Lock(lockName)
 	defer mutexKV.Unlock(lockName)
-<%      end -%>
+<%        end -%>
 
 	url, err := ReplaceVars(d, config, "<%= "{{#{object.__product.name}BasePath}}#{update_uri(object, object.update_url)}" -%>")
 	if err != nil {
@@ -653,28 +656,28 @@ func resource<%= resource_name -%>Update(d *schema.ResourceData, meta interface{
 	log.Printf("[DEBUG] Updating <%= object.name -%> %q: %#v", d.Id(), obj)
 <%= lines(compile(pwd + '/templates/terraform/update_mask.erb')) if object.update_mask -%>
 <%= lines(compile(pwd + '/' + object.custom_code.pre_update)) if object.custom_code.pre_update -%>
-<%      if object.nested_query&.modify_by_patch -%>
+<%        if object.nested_query&.modify_by_patch -%>
 <%#       Keep this after mutex - patch request data relies on current resource state %>
 	obj, err = resource<%= resource_name -%>PatchUpdateEncoder(d, meta, obj)
 	if err != nil {
 		return err
 	}
-<%      end -%>
-<%      if object.supports_indirect_user_project_override -%>
+<%        end -%>
+<%        if object.supports_indirect_user_project_override -%>
 	if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
 		billingProject = parts[1]
 	}
-<%      end -%>
+<%        end -%>
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := getBillingProject(d, config); err == nil {
 		billingProject = bp
 	}
 
-<%      if object.update_mask && field_specific_update_methods(object.root_properties) -%>
+<%        if object.update_mask && field_specific_update_methods(object.root_properties) -%>
 // if updateMask is empty we are not updating anything so skip the post
 if len(updateMask) > 0 {
-<%      end -%>
+<%        end -%>
 	res, err := SendRequestWithTimeout(config, "<%= object.update_verb -%>", billingProject, url, userAgent, obj, d.Timeout(schema.TimeoutUpdate)<%= object.error_retry_predicates ? ", " + object.error_retry_predicates.join(',') : "" -%>)
 
 	if err != nil {
@@ -683,8 +686,8 @@ if len(updateMask) > 0 {
 	log.Printf("[DEBUG] Finished updating <%= object.name -%> %q: %#v", d.Id(), res)
 	}
 
-<%      if object.async&.allow?('update') -%>
-<%        if object.async.is_a? Api::OpAsync -%>
+<%        if object.async&.allow?('update') -%>
+<%          if object.async.is_a? Api::OpAsync -%>
 	err = <%= client_name_pascal -%>OperationWaitTime(
 		config, res, <% if has_project || object.async.include_project -%> project, <% end -%> "Updating <%= object.name -%>", userAgent,
 		d.Timeout(schema.TimeoutUpdate))
@@ -692,25 +695,25 @@ if len(updateMask) > 0 {
 	if err != nil {
 		return err
 	}
-<%        elsif object.async.is_a? Provider::Terraform::PollAsync -%>
+<%          elsif object.async.is_a? Provider::Terraform::PollAsync -%>
 	err = PollingWaitTime(resource<%= resource_name -%>PollRead(d, meta), <%= object.async.check_response_func_existence -%>, "Updating <%= object.name -%>", d.Timeout(schema.TimeoutUpdate), <%= object.async.target_occurrences -%>)
 	if err != nil {
-<%          if object.async.suppress_error-%>
+<%            if object.async.suppress_error-%>
 		log.Printf("[ERROR] Unable to confirm eventually consistent <%= object.name -%> %q finished updating: %q", d.Id(), err)
-<%          else -%>
+<%            else -%>
 		return err
-<%          end -%>
+<%            end -%>
 	}
+<%          end -%>
 <%        end -%>
-<%      end -%>
-<%      if object.update_mask && field_specific_update_methods(object.root_properties) -%>
+<%        if object.update_mask && field_specific_update_methods(object.root_properties) -%>
   }
-<%      end -%>
-<%    end # if !object.immutable -%>
-<%    if field_specific_update_methods(object.root_properties) -%>
+<%        end -%>
+<%      end # if !object.immutable -%>
+<%      if field_specific_update_methods(object.root_properties) -%>
 	d.Partial(true)
 
-<%      properties_by_custom_update(object.root_properties)
+<%        properties_by_custom_update(object.root_properties)
           .sort_by {|k, _| k.nil? ? "" : k[:update_id].to_s}
           .each do |key, props|
 -%>
@@ -722,11 +725,11 @@ if len(updateMask) > 0 {
 		if err != nil {
 			return err
 		}
-<%          if object.supports_indirect_user_project_override -%>
+<%            if object.supports_indirect_user_project_override -%>
 		if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
 			billingProject = parts[1]
 		}
-<%          end -%>
+<%            end -%>
 
 		// err == nil indicates that the billing_project value was found
 		if bp, err := getBillingProject(d, config); err == nil {
@@ -740,8 +743,8 @@ if len(updateMask) > 0 {
 
 		obj["<%= key[:fingerprint_name] %>"] = getRes["<%= key[:fingerprint_name] %>"]
 
-<%      end # unless key[:fingerprint_name] -%>
-<%        custom_update_properties_by_key(properties, key)
+<%        end # unless key[:fingerprint_name] -%>
+<%          custom_update_properties_by_key(properties, key)
             .reject(&:url_param_only)
             .each do |prop| -%>
 		<% schemaPrefix = prop.flatten_object ? "nil" : "d.Get( \"#{prop.name.underscore}\" )" -%>
@@ -765,33 +768,33 @@ if len(updateMask) > 0 {
             `NullFields` is a special case of `send_empty_value` where the empty value
             in question is go's literal nil.
 -%>
-<%          if prop.send_empty_value -%>
+<%            if prop.send_empty_value -%>
 		} else if v, ok := d.GetOkExists("<%= prop.name.underscore -%>"); ok || !reflect.DeepEqual(v, <%= prop.api_name -%>Prop) {
-<%          elsif prop.flatten_object -%>
+<%            elsif prop.flatten_object -%>
 		} else if !isEmptyValue(reflect.ValueOf(<%= prop.api_name -%>Prop)) {
-<%          else -%>
+<%            else -%>
 		} else if v, ok := d.GetOkExists("<%= prop.name.underscore -%>"); !isEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, <%= prop.api_name -%>Prop)) {
-<%          end -%>
+<%            end -%>
 			obj["<%= prop.api_name -%>"] = <%= prop.api_name -%>Prop
 		}
-<%        end # props.each -%>
+<%          end # props.each -%>
 
 <%#     We need to decide what encoder to use here - if there's an update encoder, use that! -%>
-<%        if object.custom_code.update_encoder -%>
+<%          if object.custom_code.update_encoder -%>
 	obj, err = resource<%= resource_name -%>UpdateEncoder(d, meta, obj)
 	if err != nil {
 		return err
 	}
-<%        end -%>
+<%          end -%>
 
-<%        if object.mutex -%>
+<%          if object.mutex -%>
 		lockName, err := ReplaceVars(d, config, "<%= object.mutex -%>")
 		if err != nil {
 			return err
 		}
 		mutexKV.Lock(lockName)
 		defer mutexKV.Unlock(lockName)
-<%        end -%>
+<%          end -%>
 
 		url, err := ReplaceVars(d, config, "<%= "{{#{object.__product.name}BasePath}}#{update_uri(object, key[:update_url])}" -%>")
 		if err != nil {
@@ -799,11 +802,11 @@ if len(updateMask) > 0 {
 		}
 
 <%= lines(compile(pwd + '/' + object.custom_code.pre_update)) if object.custom_code.pre_update -%>
-<%        if object.supports_indirect_user_project_override -%>
+<%          if object.supports_indirect_user_project_override -%>
 		if parts := regexp.MustCompile(`projects\/([^\/]+)\/`).FindStringSubmatch(url); parts != nil {
 			billingProject = parts[1]
 		}
-<%        end -%>
+<%          end -%>
 
 		// err == nil indicates that the billing_project value was found
 		if bp, err := getBillingProject(d, config); err == nil {
@@ -817,33 +820,34 @@ if len(updateMask) > 0 {
 		log.Printf("[DEBUG] Finished updating <%= object.name -%> %q: %#v", d.Id(), res)
 	}
 
-<%        if object.async&.allow?('update') -%>
-<%          if object.async.is_a? Api::OpAsync-%>
+<%          if object.async&.allow?('update') -%>
+<%            if object.async.is_a? Api::OpAsync-%>
 		err = <%= client_name_pascal -%>OperationWaitTime(
 			config, res, <% if has_project || object.async.include_project -%> project, <% end -%> "Updating <%= object.name -%>", userAgent,
 			d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
 			return err
 		}
-<%          elsif object.async.is_a? Provider::Terraform::PollAsync -%>
+<%            elsif object.async.is_a? Provider::Terraform::PollAsync -%>
 		err = PollingWaitTime(resource<%= resource_name -%>PollRead(d, meta), <%= object.async.check_response_func_existence -%>, "Updating <%= object.name -%>", d.Timeout(schema.TimeoutUpdate), <%= object.async.target_occurrences -%>)
 		if err != nil {
-<%            if object.async.suppress_error-%>
+<%              if object.async.suppress_error-%>
 		log.Printf("[ERROR] Unable to confirm eventually consistent <%= object.name -%> %q finished updating: %q", d.Id(), err)
-<%            else -%>
+<%              else -%>
 		return err
-<%            end -%>
+<%              end -%>
 		}
+<%            end -%>
 <%          end -%>
-<%        end -%>
 	}
-<%      end -%>
+<%        end -%>
 
   d.Partial(false)
-<%    end -%>
+<%      end -%>
 
 <%= lines(compile(pwd + '/' + object.custom_code.post_update)) if object.custom_code.post_update -%>
 	return resource<%= resource_name -%>Read(d, meta)
+<%    end # if custom_update -%>
 }
 <%  end # if updatable? -%>
 
