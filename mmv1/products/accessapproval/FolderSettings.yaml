@@ -12,6 +12,7 @@
 # limitations under the License.
 
 --- !ruby/object:Api::Resource
+< This is an invalid line >
 name: FolderSettings
 base_url: 'folders/{{folder_id}}/accessApprovalSettings'
 self_link: 'folders/{{folder_id}}/accessApprovalSettings'
