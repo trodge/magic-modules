@@ -1,7 +1,7 @@
 GCB CI tools for Magic Modules and Google Providers
 ===
 
-These tools manage the downstream repositories of [magic-modules](https://github.com/GoogleCloudPlatform/magic-modules), and are collectively referred to as "The Magician".
+These tools manage the downstream repositories of [magic-modules](https://github.com/trodge/magic-modules), and are collectively referred to as "The Magician".
 
 # CI For Downstream/Magic Modules Developers
 If you're interested in developing the repositories that Magic Modules manages, here are the things you'll want to know.
@@ -70,7 +70,7 @@ When this happened the first time, Cameron and Nathan wrote this little shell sn
 SYNC_TAG=tpgb-sync
 REPO=terraform
 VERSION=beta
-git clone https://github.com/GoogleCloudPlatform/magic-modules fix-gcb-run
+git clone https://github.com/trodge/magic-modules fix-gcb-run
 pushd fix-gcb-run
 docker pull gcr.io/graphite-docker-images/downstream-builder;
 for commit in $(git log $SYNC_TAG..main --pretty=%H | tac); do

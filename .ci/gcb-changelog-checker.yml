@@ -1,13 +1,13 @@
 ---
 steps:
-- name: 'hashicorpdev/go-changelog'
+- name: 'trodgedev/go-changelog'
   id: check-changelog
   entrypoint: /go-changelog/changelog-pr-body-check
   secretEnv: ["GITHUB_TOKEN"]
   dir: mmv1
   env:
     - GITHUB_REPO=magic-modules
-    - GITHUB_OWNER=GoogleCloudPlatform
+    - GITHUB_OWNER=trodge
   args:
     - $_PR_NUMBER
 

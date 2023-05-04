@@ -58,7 +58,7 @@ func requestReviewer(author, prNumber, GITHUB_TOKEN string) error {
 }
 
 func getPullRequestAuthor(prNumber, GITHUB_TOKEN string) (string, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/issues/%s", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/issues/%s", prNumber)
 
 	var pullRequest struct {
 		User struct {
@@ -75,7 +75,7 @@ func getPullRequestAuthor(prNumber, GITHUB_TOKEN string) (string, error) {
 }
 
 func getPullRequestRequestedReviewer(prNumber, GITHUB_TOKEN string) (string, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls/%s/requested_reviewers", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/pulls/%s/requested_reviewers", prNumber)
 
 	var requestedReviewers struct {
 		Users []struct {
@@ -96,7 +96,7 @@ func getPullRequestRequestedReviewer(prNumber, GITHUB_TOKEN string) (string, err
 }
 
 func getPullRequestPreviousAssignedReviewers(prNumber, GITHUB_TOKEN string) ([]string, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls/%s/reviews", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/pulls/%s/reviews", prNumber)
 
 	var reviews []struct {
 		User struct {
@@ -123,7 +123,7 @@ func getPullRequestPreviousAssignedReviewers(prNumber, GITHUB_TOKEN string) ([]s
 }
 
 func requestPullRequestReviewer(prNumber, assignee, GITHUB_TOKEN string) error {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls/%s/requested_reviewers", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/pulls/%s/requested_reviewers", prNumber)
 
 	body := map[string][]string{
 		"reviewers":      []string{assignee},
@@ -159,7 +159,7 @@ func requestRandomReviewer(prNumber, GITHUB_TOKEN string) error {
 }
 
 func postComment(prNumber, reviewer, GITHUB_TOKEN string) error {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/issues/%s/comments", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/issues/%s/comments", prNumber)
 
 	comment := strings.Replace(reviewerAssignmentComment, "{{reviewer}}", reviewer, 1)
 

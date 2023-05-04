@@ -49,7 +49,7 @@ func isTrustedUser(author, GITHUB_TOKEN string) bool {
 		return true
 	}
 
-	if isOrgMember(author, "GoogleCloudPlatform", GITHUB_TOKEN) {
+	if isOrgMember(author, "trodge", GITHUB_TOKEN) {
 		fmt.Println("User is a GCP org member")
 		return true
 	}

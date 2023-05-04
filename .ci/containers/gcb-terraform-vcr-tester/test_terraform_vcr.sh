@@ -8,13 +8,13 @@ project_id=$4
 build_step=$5
 echo "PR number: ${pr_number}"
 echo "Commit SHA: ${mm_commit_sha}"
-github_username=modular-magician
+github_username=trodge
 gh_repo=terraform-provider-google-beta
 NEWLINE=$'\n'
 
 new_branch="auto-pr-$pr_number"
 git_remote=https://github.com/$github_username/$gh_repo
-local_path=$GOPATH/src/github.com/hashicorp/$gh_repo
+local_path=$GOPATH/src/github.com/trodge/$gh_repo
 mkdir -p "$(dirname $local_path)"
 git clone $git_remote $local_path --branch $new_branch --depth 2
 pushd $local_path
@@ -34,7 +34,7 @@ fi
 function add_comment {
   curl -H "Authorization: token ${GITHUB_TOKEN}" \
     -d "$(jq -r --arg comment "${1}" -n "{body: \$comment}")" \
-    "https://api.github.com/repos/GoogleCloudPlatform/magic-modules/issues/${pr_number}/comments"
+    "https://api.github.com/repos/trodge/magic-modules/issues/${pr_number}/comments"
 }
 
 function update_status {
@@ -48,7 +48,7 @@ function update_status {
     -X POST \
     -u "$github_username:$GITHUB_TOKEN" \
     -H "Accept: application/vnd.github.v3+json" \
-    "https://api.github.com/repos/GoogleCloudPlatform/magic-modules/statuses/$mm_commit_sha" \
+    "https://api.github.com/repos/trodge/magic-modules/statuses/$mm_commit_sha" \
     -d "$post_body"
 }
 
@@ -81,7 +81,7 @@ echo "checking terraform version"
 terraform version
 
 
-TF_LOG=DEBUG TF_LOG_PATH_MASK=$local_path/testlog/replaying/%s.log TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test ./google-beta -parallel $ACCTEST_PARALLELISM -v -run=TestAcc -timeout 240m -ldflags="-X=github.com/hashicorp/terraform-provider-google-beta/version.ProviderVersion=acc" > replaying_test.log
+TF_LOG=DEBUG TF_LOG_PATH_MASK=$local_path/testlog/replaying/%s.log TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test ./google-beta -parallel $ACCTEST_PARALLELISM -v -run=TestAcc -timeout 240m -ldflags="-X=github.com/trodge/terraform-provider-google-beta/version.ProviderVersion=acc" > replaying_test.log
 
 test_exit_code=$?
 
@@ -109,7 +109,7 @@ while [[ -n $TESTS_TERMINATED ]]; do
   test_suffix="$counter"
 
   # rerun the test
-  TF_LOG=DEBUG TF_LOG_PATH_MASK=$local_path/testlog/replaying/%s.log TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test ./google-beta -parallel $ACCTEST_PARALLELISM -v -run=TestAcc -timeout 240m -ldflags="-X=github.com/hashicorp/terraform-provider-google-beta/version.ProviderVersion=acc" > replaying_test$test_suffix.log
+  TF_LOG=DEBUG TF_LOG_PATH_MASK=$local_path/testlog/replaying/%s.log TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test ./google-beta -parallel $ACCTEST_PARALLELISM -v -run=TestAcc -timeout 240m -ldflags="-X=github.com/trodge/terraform-provider-google-beta/version.ProviderVersion=acc" > replaying_test$test_suffix.log
   test_exit_code=$?
   TESTS_TERMINATED=$(grep "^cannot run Terraform provider tests" replaying_test$test_suffix.log)
   counter=$((counter + 1))
@@ -178,7 +178,7 @@ if [[ -n $FAILED_TESTS_PATTERN ]]; then
   export VCR_MODE=RECORDING
   FAILED_TESTS=$(grep "^--- FAIL: TestAcc" replaying_test$test_suffix.log | awk '{print $3}')
   # test_exit_code=0
-  parallel --jobs 16 TF_LOG=DEBUG TF_LOG_PATH_MASK=$local_path/testlog/recording/%s.log TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test ./google-beta -parallel 1 -v -run="{}$" -timeout 120m -ldflags="-X=github.com/hashicorp/terraform-provider-google-beta/version.ProviderVersion=acc" ">" testlog/recording_build/{}_recording_test.log ::: $FAILED_TESTS
+  parallel --jobs 16 TF_LOG=DEBUG TF_LOG_PATH_MASK=$local_path/testlog/recording/%s.log TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test ./google-beta -parallel 1 -v -run="{}$" -timeout 120m -ldflags="-X=github.com/trodge/terraform-provider-google-beta/version.ProviderVersion=acc" ">" testlog/recording_build/{}_recording_test.log ::: $FAILED_TESTS
 
   test_exit_code=$?
 

@@ -7,7 +7,7 @@ build_id=$4
 build_step=$5
 project_id=$6
 
-github_username=modular-magician
+github_username=trodge
 
 set +e
 pushd $MM_LOCAL_PATH/tools/breaking-change-detector
@@ -33,7 +33,7 @@ curl \
   -X POST \
   -u "$github_username:$GITHUB_TOKEN" \
   -H "Accept: application/vnd.github.v3+json" \
-  "https://api.github.com/repos/GoogleCloudPlatform/magic-modules/statuses/$mm_commit_sha" \
+  "https://api.github.com/repos/trodge/magic-modules/statuses/$mm_commit_sha" \
   -d "$post_body"
 
 set +e
@@ -60,6 +60,6 @@ curl \
   -X POST \
   -u "$github_username:$GITHUB_TOKEN" \
   -H "Accept: application/vnd.github.v3+json" \
-  "https://api.github.com/repos/GoogleCloudPlatform/magic-modules/statuses/$mm_commit_sha" \
+  "https://api.github.com/repos/trodge/magic-modules/statuses/$mm_commit_sha" \
   -d "$post_body"
 

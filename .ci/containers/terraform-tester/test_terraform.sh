@@ -11,10 +11,10 @@ repo_name=$6
 build_step=$7
 if [ -z "$7" ]; then
   # an old run - any time after october 15 2021 this can be removed.
-  repo_name=GoogleCloudPlatform/magic-modules
+  repo_name=trodge/magic-modules
   build_step=$6
 fi
-github_username=modular-magician
+github_username=trodge
 if [ "$version" == "ga" ]; then
     gh_repo=terraform-provider-google
 elif [ "$version" == "beta" ]; then
@@ -26,7 +26,7 @@ fi
 
 new_branch="auto-pr-$pr_number"
 git_remote=https://$github_username:$GITHUB_TOKEN@github.com/$github_username/$gh_repo
-local_path=$GOPATH/src/github.com/hashicorp/$gh_repo
+local_path=$GOPATH/src/github.com/trodge/$gh_repo
 mkdir -p "$(dirname $local_path)"
 git clone $git_remote $local_path --branch $new_branch --depth 2
 pushd $local_path

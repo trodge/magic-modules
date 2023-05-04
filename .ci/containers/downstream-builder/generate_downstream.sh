@@ -3,31 +3,31 @@
 set -e
 
 function clone_repo() {
-    SCRATCH_OWNER=modular-magician
+    SCRATCH_OWNER=trodge
     UPSTREAM_BRANCH=main
     if [ "$REPO" == "terraform" ]; then
         if [ "$VERSION" == "ga" ]; then
-            UPSTREAM_OWNER=hashicorp
+            UPSTREAM_OWNER=trodge
             GH_REPO=terraform-provider-google
-            LOCAL_PATH=$GOPATH/src/github.com/hashicorp/terraform-provider-google
+            LOCAL_PATH=$GOPATH/src/github.com/trodge/terraform-provider-google
         elif [ "$VERSION" == "beta" ]; then
-            UPSTREAM_OWNER=hashicorp
+            UPSTREAM_OWNER=trodge
             GH_REPO=terraform-provider-google-beta
-            LOCAL_PATH=$GOPATH/src/github.com/hashicorp/terraform-provider-google-beta
+            LOCAL_PATH=$GOPATH/src/github.com/trodge/terraform-provider-google-beta
         else
             echo "Unrecognized version $VERSION"
             exit 1
         fi
     elif [ "$REPO" == "tf-conversion" ]; then
         # This is here for backwards compatibility and can be removed after Nov 15 2021
-        UPSTREAM_OWNER=GoogleCloudPlatform
+        UPSTREAM_OWNER=trodge
         GH_REPO=terraform-google-conversion
-        LOCAL_PATH=$GOPATH/src/github.com/GoogleCloudPlatform/terraform-google-conversion
+        LOCAL_PATH=$GOPATH/src/github.com/trodge/terraform-google-conversion
     elif [ "$REPO" == "terraform-google-conversion" ]; then
-        UPSTREAM_OWNER=GoogleCloudPlatform
+        UPSTREAM_OWNER=trodge
         UPSTREAM_BRANCH=main
         GH_REPO=terraform-google-conversion
-        LOCAL_PATH=$GOPATH/src/github.com/GoogleCloudPlatform/terraform-google-conversion
+        LOCAL_PATH=$GOPATH/src/github.com/trodge/terraform-google-conversion
     elif [ "$REPO" == "tf-oics" ]; then
         UPSTREAM_BRANCH=master
         UPSTREAM_OWNER=terraform-google-modules
@@ -42,8 +42,8 @@ function clone_repo() {
         exit 1
     fi
 
-    GITHUB_PATH=https://modular-magician:$GITHUB_TOKEN@github.com/$UPSTREAM_OWNER/$GH_REPO
-    SCRATCH_PATH=https://modular-magician:$GITHUB_TOKEN@github.com/$SCRATCH_OWNER/$GH_REPO
+    GITHUB_PATH=https://trodge:$GITHUB_TOKEN@github.com/$UPSTREAM_OWNER/$GH_REPO
+    SCRATCH_PATH=https://trodge:$GITHUB_TOKEN@github.com/$SCRATCH_OWNER/$GH_REPO
     mkdir -p "$(dirname $LOCAL_PATH)"
     git clone $GITHUB_PATH $LOCAL_PATH
 }
@@ -112,9 +112,9 @@ if [ "$REPO" == "terraform-google-conversion" ]; then
     pushd $LOCAL_PATH
 
     if [ "$COMMAND" == "downstream" ]; then
-      go get -d github.com/hashicorp/terraform-provider-google@main
+      go get -d github.com/trodge/terraform-provider-google@main
     else
-      go mod edit -replace github.com/hashicorp/terraform-provider-google=github.com/$SCRATCH_OWNER/terraform-provider-google@$BRANCH
+      go mod edit -replace github.com/trodge/terraform-provider-google=github.com/$SCRATCH_OWNER/terraform-provider-google@$BRANCH
     fi
 
     go mod tidy
@@ -173,13 +173,13 @@ if [ "$REPO" == "terraform" ]; then
 fi
 
 PR_NUMBER=$(curl -L -s -H "Authorization: token ${GITHUB_TOKEN}" \
-    "https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls?state=closed&base=main&sort=updated&direction=desc" | \
+    "https://api.github.com/repos/trodge/magic-modules/pulls?state=closed&base=main&sort=updated&direction=desc" | \
     jq -r ".[] | if .merge_commit_sha == \"$REFERENCE\" then .number else empty end")
 if [ "$COMMITTED" == "true" ] && [ "$COMMAND" == "downstream" ] && [ "$CHANGELOG" == "true" ]; then
     # Add the changelog entry!
     mkdir -p .changelog/
     curl -L -s -H "Authorization: token ${GITHUB_TOKEN}" \
-        "https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls/$PR_NUMBER" | \
+        "https://api.github.com/repos/trodge/magic-modules/pulls/$PR_NUMBER" | \
         jq -r .body | \
         sed -e '/```release-note/,/```/!d' \
         > .changelog/$PR_NUMBER.txt
@@ -191,13 +191,13 @@ git push $SCRATCH_PATH $BRANCH -f
 
 if [ "$COMMITTED" == "true" ] && [ "$COMMAND" == "downstream" ]; then
     PR_BODY=$(curl -L -s -H "Authorization: token ${GITHUB_TOKEN}" \
-        "https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls/$PR_NUMBER" | \
+        "https://api.github.com/repos/trodge/magic-modules/pulls/$PR_NUMBER" | \
         jq -r .body)
     PR_TITLE=$(curl -L -s -H "Authorization: token ${GITHUB_TOKEN}" \
-        "https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls/$PR_NUMBER" | \
+        "https://api.github.com/repos/trodge/magic-modules/pulls/$PR_NUMBER" | \
         jq -r .title)
     MM_PR_URL=$(curl -L -s -H "Authorization: token ${GITHUB_TOKEN}" \
-        "https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls/$PR_NUMBER" | \
+        "https://api.github.com/repos/trodge/magic-modules/pulls/$PR_NUMBER" | \
         jq -r .html_url)
 
     echo "Base: $UPSTREAM_OWNER:$UPSTREAM_BRANCH"

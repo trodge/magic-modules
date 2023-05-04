@@ -17,7 +17,7 @@ resource "google_project" "proj" {
 
 resource "google_service_account" "sa" {
   project      = google_project.proj.project_id
-  account_id   = "hashicorp-test-runner"
+  account_id   = "trodge-test-runner"
   display_name = "HashiCorp Test Runner"
 }
 

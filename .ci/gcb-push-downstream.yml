@@ -15,7 +15,7 @@ steps:
       id: clone
       args:
           - clone
-          - https://github.com/GoogleCloudPlatform/magic-modules
+          - https://github.com/trodge/magic-modules
           - .
 
     - name: 'gcr.io/cloud-builders/git'
@@ -50,7 +50,7 @@ steps:
       entrypoint: 'bash'
       args:
           - -c
-          - git push https://modular-magician:$$GITHUB_TOKEN@github.com/GoogleCloudPlatform/magic-modules $COMMIT_SHA:tpg-sync
+          - git push https://trodge:$$GITHUB_TOKEN@github.com/trodge/magic-modules $COMMIT_SHA:tpg-sync
 
     # TPGB
     - name: 'gcr.io/graphite-docker-images/downstream-waiter'
@@ -78,7 +78,7 @@ steps:
       entrypoint: 'bash'
       args:
           - -c
-          - git push https://modular-magician:$$GITHUB_TOKEN@github.com/GoogleCloudPlatform/magic-modules $COMMIT_SHA:tpgb-sync
+          - git push https://trodge:$$GITHUB_TOKEN@github.com/trodge/magic-modules $COMMIT_SHA:tpgb-sync
 
     # TGC
     - name: 'gcr.io/graphite-docker-images/downstream-waiter'
@@ -106,7 +106,7 @@ steps:
       entrypoint: 'bash'
       args:
           - -c
-          - git push https://modular-magician:$$GITHUB_TOKEN@github.com/GoogleCloudPlatform/magic-modules $COMMIT_SHA:tgc-sync
+          - git push https://trodge:$$GITHUB_TOKEN@github.com/trodge/magic-modules $COMMIT_SHA:tgc-sync
 
     # TF-OICS
     - name: 'gcr.io/graphite-docker-images/downstream-waiter'
@@ -134,7 +134,7 @@ steps:
       entrypoint: 'bash'
       args:
           - -c
-          - git push https://modular-magician:$$GITHUB_TOKEN@github.com/GoogleCloudPlatform/magic-modules $COMMIT_SHA:tf-oics-sync
+          - git push https://trodge:$$GITHUB_TOKEN@github.com/trodge/magic-modules $COMMIT_SHA:tf-oics-sync
 
     - name: 'gcr.io/graphite-docker-images/vcr-cassette-merger'
       secretEnv: ["GITHUB_TOKEN", "GOOGLE_PROJECT"]

@@ -54,7 +54,7 @@ func postAwaitingApprovalBuildLink(prNumber, GITHUB_TOKEN, projectId, commitSha 
 
 func postBuildStatus(prNumber, GITHUB_TOKEN, commitSha string, body map[string]string) error {
 
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/statuses/%s", commitSha)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/statuses/%s", commitSha)
 
 	_, err := requestCall(url, "POST", GITHUB_TOKEN, nil, body)
 	if err != nil {
@@ -125,7 +125,7 @@ func approveBuild(projectId, buildId string) error {
 }
 
 func addAwaitingApprovalLabel(prNumber, GITHUB_TOKEN string) error {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/issues/%s/labels", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/issues/%s/labels", prNumber)
 
 	body := map[string][]string{
 		"labels": []string{"awaiting-approval"},
@@ -141,7 +141,7 @@ func addAwaitingApprovalLabel(prNumber, GITHUB_TOKEN string) error {
 }
 
 func removeAwaitingApprovalLabel(prNumber, GITHUB_TOKEN string) error {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/issues/%s/labels/awaiting-approval", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/issues/%s/labels/awaiting-approval", prNumber)
 	_, err := requestCall(url, "DELETE", GITHUB_TOKEN, nil, nil)
 
 	if err != nil {

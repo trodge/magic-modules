@@ -9,7 +9,7 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH"
 WORKDIR $GOPATH
 
 # terraform binary used by tfv/tgc
-COPY --from=hashicorp/terraform:1.4.2 /bin/terraform /bin/terraform
+COPY --from=trodge/terraform:1.4.2 /bin/terraform /bin/terraform
 
 SHELL ["/bin/bash", "-c"]
 
@@ -29,8 +29,8 @@ RUN echo "UserKnownHostsFile /known_hosts" >> /etc/ssh/ssh_config
 RUN go install golang.org/x/tools/cmd/goimports@d088b475e3360caabc032aaee1dc66351d4e729a
 RUN go install github.com/github/hub@v2.11.2+incompatible
 
-ADD "https://raw.githubusercontent.com/GoogleCloudPlatform/magic-modules/main/mmv1/Gemfile" Gemfile
-ADD "https://raw.githubusercontent.com/GoogleCloudPlatform/magic-modules/main/mmv1/Gemfile.lock" Gemfile.lock
+ADD "https://raw.githubusercontent.com/trodge/magic-modules/main/mmv1/Gemfile" Gemfile
+ADD "https://raw.githubusercontent.com/trodge/magic-modules/main/mmv1/Gemfile.lock" Gemfile.lock
 RUN bundle install
 RUN rm Gemfile Gemfile.lock
 

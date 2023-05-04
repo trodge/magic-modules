@@ -13,7 +13,7 @@ Prerequisites:
 
 After applying this configuration:
 - (Internal only) Enable stubbed calls for GKE MultiCloud resources
-- (Internal only) Verify ownership of `hashicorptest.com` for new service account
+- (Internal only) Verify ownership of `trodgetest.com` for new service account
 - Enable Media CDN
 - Enable Game Services
 - Enable Access Boundary permissions
@@ -21,7 +21,7 @@ After applying this configuration:
 - Deploy "Hello World" app: https://cloud.google.com/appengine/docs/flexible/go/create-app
     ```
     gcloud components install app-engine-go
-    git clone https://github.com/GoogleCloudPlatform/golang-samples
+    git clone https://github.com/trodge/golang-samples
     cp -r golang-samples/appengine_flexible/helloworld ./.
     cd helloworld
     gcloud app deploy --project=<project>
@@ -31,7 +31,7 @@ After applying this configuration:
     gcloud source repos create cloudfunctions-test-do-not-delete --project=<project>
     gcloud source repos clone cloudfunctions-test-do-not-delete --project=<project>
     cd cloudfunctions-test-do-not-delete
-    curl https://raw.githubusercontent.com/GoogleCloudPlatform/magic-modules/main/mmv1/third_party/terraform/utils/test-fixtures/cloudfunctions/http_trigger.s > index.js
+    curl https://raw.githubusercontent.com/trodge/magic-modules/main/mmv1/third_party/terraform/utils/test-fixtures/cloudfunctions/http_trigger.s > index.js
     git add .
     git commit -m "Initial commit"
     git push origin main
