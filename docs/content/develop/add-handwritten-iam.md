@@ -1,7 +1,7 @@
 ---
 title: "Add handwritten IAM resources"
 summary: "Handwritten IAM support is only recommended for resources that cannot be managed
-using [MMv1](/magic-modules/docs/how-to/add-mmv1-iam)."
+using [MMv1]({{< ref '/develop/add-mmv1-iam' >}})."
 weight: 23
 aliases:
   - /docs/how-to/add-handwritten-iam
@@ -11,7 +11,7 @@ aliases:
 # Add handwritten IAM resources
 
 Handwritten IAM support is only recommended for resources that cannot be managed
-using [MMv1](/magic-modules/docs/how-to/add-mmv1-iam),
+using [MMv1]({{< ref "/develop/add-mmv1-iam" >}}),
 including for handwritten resources, due to the need to manage tests and
 documentation by hand. This guidance goes through the motions of adding support
 for new handwritten IAM resources, but does not go into the details of the
