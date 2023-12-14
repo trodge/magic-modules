@@ -68,7 +68,7 @@ examples:
       zip_path: '"./test-fixtures/function-source.zip"'
       location:
         '"us-central1"'
-        # ignore these fields during import step
+    # ignore these fields during import step
     ignore_read_extra:
       - 'build_config.0.source.0.storage_source.0.object'
       - 'build_config.0.source.0.storage_source.0.bucket'
@@ -88,7 +88,7 @@ examples:
       primary_resource_id: '"terraform-test"'
       location:
         '"us-central1"'
-        # ignore these fields during import step
+    # ignore these fields during import step
     ignore_read_extra:
       - 'build_config.0.source.0.storage_source.0.object'
       - 'build_config.0.source.0.storage_source.0.bucket'
@@ -107,7 +107,7 @@ examples:
       primary_resource_id: '"terraform-test"'
       location:
         '"us-central1"'
-        # ignore these fields during import step
+    # ignore these fields during import step
     ignore_read_extra:
       - 'build_config.0.source.0.storage_source.0.object'
       - 'build_config.0.source.0.storage_source.0.bucket'
@@ -126,11 +126,7 @@ examples:
     test_vars_overrides:
       zip_path: '"./test-fixtures/function-source-eventarc-gcs.zip"'
       primary_resource_id: '"terraform-test"'
-      policyChanged:
-        "acctest.BootstrapPSARole(t, \"service-\", \"gcp-sa-pubsub\",
-        \"roles/cloudkms.cryptoKeyEncrypterDecrypter\"\
-        )"
-        # ignore these fields during import step
+    # ignore these fields during import step
     ignore_read_extra:
       - 'build_config.0.source.0.storage_source.0.object'
       - 'build_config.0.source.0.storage_source.0.bucket'
@@ -148,11 +144,7 @@ examples:
     test_vars_overrides:
       zip_path: '"./test-fixtures/function-source-eventarc-gcs.zip"'
       primary_resource_id: '"terraform-test"'
-      policyChanged:
-        "acctest.BootstrapPSARole(t, \"service-\", \"gcp-sa-pubsub\",
-        \"roles/cloudkms.cryptoKeyEncrypterDecrypter\"\
-        )"
-        # ignore these fields during import step
+    # ignore these fields during import step
     ignore_read_extra:
       - 'build_config.0.source.0.storage_source.0.object'
       - 'build_config.0.source.0.storage_source.0.bucket'
@@ -169,11 +161,7 @@ examples:
     test_vars_overrides:
       zip_path: '"./test-fixtures/function-source.zip"'
       location: '"us-central1"'
-      policyChanged:
-        "acctest.BootstrapPSARole(t, \"service-\", \"gcp-sa-pubsub\",
-        \"roles/cloudkms.cryptoKeyEncrypterDecrypter\"\
-        )"
-        # ignore these fields during import step
+    # ignore these fields during import step
     ignore_read_extra:
       - 'build_config.0.source.0.storage_source.0.object'
       - 'build_config.0.source.0.storage_source.0.bucket'
@@ -190,11 +178,7 @@ examples:
     test_vars_overrides:
       zip_path: '"./test-fixtures/function-source.zip"'
       location: '"us-central1"'
-      policyChanged:
-        "acctest.BootstrapPSARole(t, \"service-\", \"gcp-sa-pubsub\",
-        \"roles/cloudkms.cryptoKeyEncrypterDecrypter\"\
-        )"
-        # ignore these fields during import step
+    # ignore these fields during import step
     ignore_read_extra:
       - 'build_config.0.source.0.storage_source.0.object'
       - 'build_config.0.source.0.storage_source.0.bucket'
@@ -212,7 +196,7 @@ examples:
       zip_path: '"./test-fixtures/function-source.zip"'
       location:
         '"us-central1"'
-        # ignore these fields during import step
+    # ignore these fields during import step
     ignore_read_extra:
       - 'build_config.0.source.0.storage_source.0.object'
       - 'build_config.0.source.0.storage_source.0.bucket'

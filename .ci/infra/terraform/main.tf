@@ -377,6 +377,16 @@ resource "google_project_iam_member" "compute_agent_secret_accessor" {
   member  = "serviceAccount:${google_project.proj.number}-compute@developer.gserviceaccount.com"
 }
 
+# TestAccCloudfunctions2function_cloudfunctions2BasicGcsExample
+# TestAccCloudfunctions2function_cloudfunctions2BasicAuditlogsExample
+# TestAccCloudfunctions2function_cloudfunctions2SecretEnvExample
+# TestAccCloudfunctions2function_cloudfunctions2SecretVolumeExample
+resource "google_project_iam_member" "pubsub_crypto_key_encrypter_decrypter" {
+  project = google_project.proj.project_id
+  role    = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member  = "serviceAccount:service-${google_project.proj.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+}
+
 # TestAccVertexAIEndpoint_vertexAiEndpointNetwork
 # TestAccVertexAIFeaturestoreEntitytype_vertexAiFeaturestoreEntitytypeExample
 # TestAccVertexAIFeaturestoreEntitytype_vertexAiFeaturestoreEntitytypeWithBetaFieldsExample
