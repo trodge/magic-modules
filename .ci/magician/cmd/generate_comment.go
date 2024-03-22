@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -370,6 +371,12 @@ func execGenerateComment(prNumber int, ghTokenMagicModules, buildId, buildStep, 
 		}
 	}
 
+	// Check for yaml changes alongside other CI changes
+	if err = checkYAMLChanges(mmLocalPath, targetURL, commitSha, prNumber, gh, rnr); err != nil {
+		fmt.Println("Error from checking yaml changes: ", err)
+		errors["Other"] = append(errors["Other"], err.Error())
+	}
+
 	// Add errors to data as an ordered list
 	errorsList := []Errors{}
 	for _, repo := range []source.Repo{tpgRepo, tpgbRepo, tgcRepo, tfoicsRepo} {
@@ -568,6 +575,44 @@ func runMissingTestUnitTests(mmLocalPath, tpgbLocalPath, targetURL, commitSha st
 	if err := gh.PostBuildStatus(strconv.Itoa(prNumber), "unit-tests-missing-test-detector", state, targetURL, commitSha); err != nil {
 		return err
 	}
+	return rnr.PopDir()
+}
+
+// Post a failure build status if PR includes changes to gcb-community-checker.yml or gcb-contributor-membership-checker.yml along with non-yaml CI changes
+func checkYAMLChanges(mmLocalPath, targetURL, commitSha string, prNumber int, gh GithubClient, rnr ExecRunner) error {
+	if err := rnr.PushDir(mmLocalPath); err != nil {
+		return err
+	}
+
+	diffs, err := rnr.Run("git", []string{"diff", "--name-only", "HEAD", "origin/main", ".ci"}, nil)
+	if err != nil {
+		return err
+	}
+	if diffs == "" {
+		// Short-circuit if there are no changes to ci
+		return rnr.PopDir()
+	}
+
+	hasYAMLChanges := false
+	hasOtherChanges := false
+	for _, diff := range strings.Split(diffs, "\n") {
+		if diff == ".ci/gcb-community-checker.yml" || diff == ".ci/gcb-contributor-membership-checker.yml" {
+			hasYAMLChanges = true
+		} else if !strings.HasSuffix(diff, ".yml") {
+			hasOtherChanges = true
+		}
+	}
+
+	if hasYAMLChanges && hasOtherChanges {
+		if err := gh.PostBuildStatus(strconv.Itoa(prNumber), "yaml-changes-with-other-ci-changes", "failure", targetURL, commitSha); err != nil {
+			return err
+		}
+		if err := rnr.PopDir(); err != nil {
+			return err
+		}
+		return errors.New("Detected changes in both cloud build yaml and other CI files. These changes should be made in separate PRs to ensure backward compatibility")
+	}
+
 	return rnr.PopDir()
 }
 
