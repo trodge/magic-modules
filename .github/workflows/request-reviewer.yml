@@ -41,6 +41,7 @@ jobs:
       - name: Build magician
         run: |
           cd .ci/magician
+          ls
           go build .
       - name: Request reviewer
         run: .ci/magician/magician request-reviewer ${{ github.event.pull_request.number || github.event.issue.number }}
