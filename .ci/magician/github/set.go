@@ -21,7 +21,7 @@ import (
 )
 
 func (gh *Client) PostBuildStatus(prNumber, title, state, targetURL, commitSha string) error {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/statuses/%s", commitSha)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/statuses/%s", commitSha)
 
 	postBody := map[string]string{
 		"context":    title,
@@ -40,7 +40,7 @@ func (gh *Client) PostBuildStatus(prNumber, title, state, targetURL, commitSha s
 }
 
 func (gh *Client) PostComment(prNumber, comment string) error {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/issues/%s/comments", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/issues/%s/comments", prNumber)
 
 	body := map[string]string{
 		"body": comment,
@@ -57,7 +57,7 @@ func (gh *Client) PostComment(prNumber, comment string) error {
 }
 
 func (gh *Client) RequestPullRequestReviewers(prNumber string, reviewers []string) error {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls/%s/requested_reviewers", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/pulls/%s/requested_reviewers", prNumber)
 
 	body := map[string][]string{
 		"reviewers":      reviewers,
@@ -75,7 +75,7 @@ func (gh *Client) RequestPullRequestReviewers(prNumber string, reviewers []strin
 }
 
 func (gh *Client) AddLabels(prNumber string, labels []string) error {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/issues/%s/labels", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/issues/%s/labels", prNumber)
 
 	body := map[string][]string{
 		"labels": labels,
@@ -91,7 +91,7 @@ func (gh *Client) AddLabels(prNumber string, labels []string) error {
 }
 
 func (gh *Client) RemoveLabel(prNumber, label string) error {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/issues/%s/labels/%s", prNumber, label)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/issues/%s/labels/%s", prNumber, label)
 	err := utils.RequestCall(url, "DELETE", gh.token, nil, nil)
 
 	if err != nil {
@@ -102,7 +102,7 @@ func (gh *Client) RemoveLabel(prNumber, label string) error {
 }
 
 func (gh *Client) CreateWorkflowDispatchEvent(workflowFileName string, inputs map[string]any) error {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/actions/workflows/%s/dispatches", workflowFileName)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/actions/workflows/%s/dispatches", workflowFileName)
 	err := utils.RequestCall(url, "POST", gh.token, nil, map[string]any{
 		"ref":    "main",
 		"inputs": inputs,

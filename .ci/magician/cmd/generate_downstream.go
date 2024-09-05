@@ -196,7 +196,7 @@ func cloneRepo(mmRepo *source.Repo, baseBranch, repo, version, command, ref stri
 		downstreamRepo.Owner = "hashicorp"
 	case "terraform-google-conversion":
 		downstreamRepo.Name = "terraform-google-conversion"
-		downstreamRepo.Owner = "GoogleCloudPlatform"
+		downstreamRepo.Owner = "trodge"
 	case "tf-oics":
 		if downstreamRepo.Branch == "main" {
 			downstreamRepo.Branch = "master"

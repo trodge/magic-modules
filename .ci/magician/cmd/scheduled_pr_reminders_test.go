@@ -882,7 +882,7 @@ func TestFormatReminderComment(t *testing.T) {
 				"@" + secondCoreReviewer,
 			},
 			notExpectedStrings: []string{
-				"@GoogleCloudPlatform/terraform-team",
+				"@trodge/terraform-team",
 				"@pr-author",
 				"@other-reviewer",
 			},
@@ -899,7 +899,7 @@ func TestFormatReminderComment(t *testing.T) {
 			state:     waitingForReview,
 			sinceDays: 5,
 			expectedStrings: []string{
-				"@GoogleCloudPlatform/terraform-team",
+				"@trodge/terraform-team",
 				"waiting for review for 1 week",
 				"disable-review-reminders",
 				"@" + firstCoreReviewer,
@@ -922,7 +922,7 @@ func TestFormatReminderComment(t *testing.T) {
 			state:     waitingForReview,
 			sinceDays: 10,
 			expectedStrings: []string{
-				"@GoogleCloudPlatform/terraform-team",
+				"@trodge/terraform-team",
 				"waiting for review for 2 weeks",
 				"disable-review-reminders",
 				"@" + firstCoreReviewer,

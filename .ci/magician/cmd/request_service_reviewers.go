@@ -21,7 +21,7 @@ import (
 	"math/rand"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/magic-modules/tools/issue-labeler/labeler"
+	"github.com/trodge/magic-modules/tools/issue-labeler/labeler"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 )
@@ -108,9 +108,9 @@ func execRequestServiceReviewers(prNumber string, gh GithubClient, enrolledTeams
 
 	exitCode := 0
 	for githubTeam := range githubTeamsSet {
-		members, err := gh.GetTeamMembers("GoogleCloudPlatform", githubTeam)
+		members, err := gh.GetTeamMembers("trodge", githubTeam)
 		if err != nil {
-			fmt.Printf("Error fetching members for GoogleCloudPlatform/%s: %s", githubTeam, err)
+			fmt.Printf("Error fetching members for trodge/%s: %s", githubTeam, err)
 			exitCode = 1
 			continue
 		}

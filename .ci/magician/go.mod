@@ -2,10 +2,10 @@ module magician
 
 go 1.21
 
-replace github.com/GoogleCloudPlatform/magic-modules/tools/issue-labeler => ../../tools/issue-labeler
+replace github.com/trodge/magic-modules/tools/issue-labeler => ../../tools/issue-labeler
 
 require (
-	github.com/GoogleCloudPlatform/magic-modules/tools/issue-labeler v0.0.0-00010101000000-000000000000
+	github.com/trodge/magic-modules/tools/issue-labeler v0.0.0-00010101000000-000000000000
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5 // indirect

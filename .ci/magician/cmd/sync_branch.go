@@ -63,7 +63,7 @@ func execSyncBranchCmd(syncBranchPrefix, baseBranch, sha, githubToken string, ru
 		return nil
 	}
 
-	_, err := runner.Run("git", []string{"push", fmt.Sprintf("https://modular-magician:%s@github.com/GoogleCloudPlatform/magic-modules", githubToken), fmt.Sprintf("%s:%s", sha, syncBranch)}, nil)
+	_, err := runner.Run("git", []string{"push", fmt.Sprintf("https://modular-magician:%s@github.com/trodge/magic-modules", githubToken), fmt.Sprintf("%s:%s", sha, syncBranch)}, nil)
 	return err
 }
 

@@ -39,7 +39,7 @@ type PullRequest struct {
 }
 
 func (gh *Client) GetPullRequest(prNumber string) (PullRequest, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/issues/%s", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/issues/%s", prNumber)
 
 	var pullRequest PullRequest
 
@@ -49,7 +49,7 @@ func (gh *Client) GetPullRequest(prNumber string) (PullRequest, error) {
 }
 
 func (gh *Client) GetPullRequests(state, base, sort, direction string) ([]PullRequest, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls?state=%s&base=%s&sort=%s&direction=%s", state, base, sort, direction)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/pulls?state=%s&base=%s&sort=%s&direction=%s", state, base, sort, direction)
 
 	var pullRequests []PullRequest
 
@@ -59,7 +59,7 @@ func (gh *Client) GetPullRequests(state, base, sort, direction string) ([]PullRe
 }
 
 func (gh *Client) GetPullRequestRequestedReviewers(prNumber string) ([]User, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls/%s/requested_reviewers", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/pulls/%s/requested_reviewers", prNumber)
 
 	var requestedReviewers struct {
 		Users []User `json:"users"`
@@ -74,7 +74,7 @@ func (gh *Client) GetPullRequestRequestedReviewers(prNumber string) ([]User, err
 }
 
 func (gh *Client) GetPullRequestPreviousReviewers(prNumber string) ([]User, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/GoogleCloudPlatform/magic-modules/pulls/%s/reviews", prNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/trodge/magic-modules/pulls/%s/reviews", prNumber)
 
 	var reviews []struct {
 		User User `json:"user"`

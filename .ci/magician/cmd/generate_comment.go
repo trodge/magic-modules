@@ -31,7 +31,7 @@ import (
 	"magician/provider"
 	"magician/source"
 
-	"github.com/GoogleCloudPlatform/magic-modules/tools/issue-labeler/labeler"
+	"github.com/trodge/magic-modules/tools/issue-labeler/labeler"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/maps"

@@ -81,7 +81,7 @@ func execScheduledPrReminders(gh *github.Client) error {
 	for {
 		pulls, resp, err := gh.PullRequests.List(
 			ctx,
-			"GoogleCloudPlatform",
+			"trodge",
 			"magic-modules",
 			opt,
 		)
@@ -110,7 +110,7 @@ func execScheduledPrReminders(gh *github.Client) error {
 		for {
 			events, resp, err := gh.Issues.ListIssueEvents(
 				ctx,
-				"GoogleCloudPlatform",
+				"trodge",
 				"magic-modules",
 				*pr.Number,
 				eventsOpt,
@@ -130,7 +130,7 @@ func execScheduledPrReminders(gh *github.Client) error {
 		for {
 			reviews, resp, err := gh.PullRequests.ListReviews(
 				ctx,
-				"GoogleCloudPlatform",
+				"trodge",
 				"magic-modules",
 				*pr.Number,
 				reviewsOpt,
@@ -181,7 +181,7 @@ func execScheduledPrReminders(gh *github.Client) error {
 			} else {
 				_, _, err := gh.Issues.CreateComment(
 					ctx,
-					"GoogleCloudPlatform",
+					"trodge",
 					"magic-modules",
 					*pr.Number,
 					&github.IssueComment{
@@ -200,7 +200,7 @@ func execScheduledPrReminders(gh *github.Client) error {
 			} else {
 				_, _, err := gh.Issues.Edit(
 					ctx,
-					"GoogleCloudPlatform",
+					"trodge",
 					"magic-modules",
 					*pr.Number,
 					&github.IssueRequest{

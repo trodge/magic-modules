@@ -162,7 +162,7 @@ func (gh *Client) GetUserType(user string) UserType {
 		return CoreContributorUserType
 	}
 
-	if isOrgMember(user, "GoogleCloudPlatform", gh.token) {
+	if isOrgMember(user, "trodge", gh.token) {
 		fmt.Println("User is a GCP org member")
 		return GooglerUserType
 	}
