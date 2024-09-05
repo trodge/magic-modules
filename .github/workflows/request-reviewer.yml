@@ -24,9 +24,12 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.2
+        with:
+          repository: trodge/magic-modules
       - name: Checkout membership data from main branch
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.2
         with:
+          repository: trodge/magic-modules
           ref: main
           path: .ci/magician/github/membership_data.go
           sparse-checkout: |
