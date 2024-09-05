@@ -26,11 +26,12 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.2
         with:
           repository: trodge/magic-modules
+          ref: force-test-run
       - name: Checkout membership data from main branch
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.2
         with:
           repository: trodge/magic-modules
-          ref: main
+          ref: force-test-run
           path: .ci/magician/github/membership_data.go
           sparse-checkout: |
             .ci/magician/github/membership_data.go
