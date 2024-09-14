@@ -10,8 +10,8 @@ An owner is an additional user that may manage a verified web site in the
 are two types of web resource owners:
 
 * Verified owners, which are added to a web resource automatically when it
-    is created (i.e., when the resource is verified). Owners are
-    determined by the identity of the users requesting verification.
+    is created (i.e., when the resource is verified). A verified owner is
+    determined by the identity of the user requesting verification.
 * Additional owners, which can be added to the resource by verified owners.
 
 `google_site_verification_owner` creates additional owners. If your web site
@@ -109,7 +109,7 @@ This resource provides the following
 ## Import
 
 
-Owner can be imported using any of these accepted formats:
+Owner can be imported using this format:
 
 * `webResource/{{web_resource_id}}/{{email}}`
 
