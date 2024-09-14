@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
 	"github.com/hashicorp/terraform-provider-google/google/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google/google/transport"
 )
@@ -39,7 +38,7 @@ func ResourceSiteVerificationOwner() *schema.Resource {
 				Required:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
-				Description:      `The id of the Web Resource to add this owner to.`,
+				Description:      `The id of the Web Resource to add this owner to, in the form "webResource/<web-resource-id>".`,
 			},
 		},
 		UseJSONNumber: true,
@@ -269,6 +268,7 @@ func resourceSiteVerificationOwnerImport(d *schema.ResourceData, meta interface{
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
 	log.Printf("[DEBUG] Finished importing Owner %q", d.Id())
 
 	return []*schema.ResourceData{d}, nil
