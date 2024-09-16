@@ -124,6 +124,7 @@ resource "google_site_verification_web_resource" "example" {
 }
 
 resource "google_site_verification_owner" "example1" {
+  provider        = google.scoped
   web_resource_id = google_site_verification_web_resource.example.id
   email           = "${google_service_account.test-account1.email}"
 }
@@ -190,11 +191,13 @@ resource "google_site_verification_web_resource" "example" {
 }
 
 resource "google_site_verification_owner" "example1" {
+  provider        = google.scoped
   web_resource_id = google_site_verification_web_resource.example.id
   email           = "${google_service_account.test-account1.email}"
 }
 
 resource "google_site_verification_owner" "example2" {
+  provider        = google.scoped
   web_resource_id = google_site_verification_web_resource.example.id
   email           = "${google_service_account.test-account2.email}"
 }
