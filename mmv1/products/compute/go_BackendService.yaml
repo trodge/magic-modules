@@ -774,6 +774,9 @@ properties:
       [Choosing a load balancer](https://cloud.google.com/load-balancing/docs/backend-service).
     immutable: true
     default_value: "EXTERNAL"
+    # If you're modifying this value, it probably means Global ILB is now
+    # an option. If that's the case, all of the documentation is based on
+    # this resource supporting external load balancing only.
     enum_values:
       - 'EXTERNAL'
       - 'INTERNAL_SELF_MANAGED'
@@ -1177,7 +1180,6 @@ properties:
           success rate: mean - (stdev * success_rate_stdev_factor). This factor is divided
           by a thousand to get a double. That is, if the desired factor is 1.9, the
           runtime value should be 1900. Defaults to 1900.
-  # 'port' is deprecated
         at_least_one_of:
           - 'outlier_detection.0.base_ejection_time'
           - 'outlier_detection.0.consecutive_errors'
@@ -1190,6 +1192,7 @@ properties:
           - 'outlier_detection.0.success_rate_minimum_hosts'
           - 'outlier_detection.0.success_rate_request_volume'
           - 'outlier_detection.0.success_rate_stdev_factor'
+  # 'port' is deprecated
   - name: 'portName'
     type: String
     description: |
@@ -1205,6 +1208,7 @@ properties:
       types and may result in errors if used with the GA API. **NOTE**: With protocol “UNSPECIFIED”,
       the backend service can be used by Layer 4 Internal Load Balancing or Network Load Balancing
       with TCP/UDP/L3_DEFAULT Forwarding Rule protocol.
+    # TODO: make a ResourceRef to Security Policy
     default_from_api: true
     enum_values:
       - 'HTTP'
