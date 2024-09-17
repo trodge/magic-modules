@@ -206,7 +206,6 @@ resource "google_compute_firewall_policy_rule" "fw_policy_rule" {
   direction       = "EGRESS"
   disabled        = false
   tls_inspect     = false
-  rule_name       = "tf-test-rule-%{random_suffix}"
 
   match {
     layer4_configs {
