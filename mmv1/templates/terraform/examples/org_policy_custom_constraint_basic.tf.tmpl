@@ -1,6 +1,7 @@
 resource "google_org_policy_custom_constraint" "{{$.PrimaryResourceId}}" {
 
   name         = "{{index $.Vars "policy_name"}}"
+  display_name = "test-constraint"
   parent       = "organizations/{{index $.TestEnvVars "org_id"}}"
 
   action_type    = "ALLOW"
