@@ -1,0 +1,9 @@
+in mmv1/api/resource.go make the TGCResource struct a superset of the Resource struct and make all methods that use TGCResource fields use it as the receiever type. Do not make any unrelated changes
+
+why did you think SetDefault should use TGCResource?
+
+move all the TGCResource related code to a file called tgc_resource.go in the same directory and package
+
+why is the TGCResource struct definition still in resource.go?
+
+check again for TGCResource related code in resource.go
