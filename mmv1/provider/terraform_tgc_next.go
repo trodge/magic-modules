@@ -91,7 +91,7 @@ func (tgc TerraformGoogleConversionNext) Generate(outputFolder, productPath, res
 	}
 }
 
-func (tgc TerraformGoogleConversionNext) GenerateObject(object api.Resource, outputFolder, resourceToGenerate string, generateCode, generateDocs bool) {
+func (tgc TerraformGoogleConversionNext) GenerateObject(object api.TGCResource, outputFolder, resourceToGenerate string, generateCode, generateDocs bool) {
 	if !object.IncludeInTGCNext {
 		return
 	}
@@ -104,7 +104,7 @@ func (tgc TerraformGoogleConversionNext) GenerateObject(object api.Resource, out
 	}
 }
 
-func (tgc TerraformGoogleConversionNext) GenerateResource(object api.Resource, templateData TemplateData, outputFolder string, generateCode, generateDocs bool) {
+func (tgc TerraformGoogleConversionNext) GenerateResource(object api.TGCResource, templateData TemplateData, outputFolder string, generateCode, generateDocs bool) {
 	productName := tgc.Product.ApiName
 	targetFolder := path.Join(outputFolder, "pkg/services", productName)
 	if err := os.MkdirAll(targetFolder, os.ModePerm); err != nil {
@@ -126,7 +126,7 @@ func (tgc TerraformGoogleConversionNext) GenerateResource(object api.Resource, t
 func (tgc TerraformGoogleConversionNext) GenerateCaiToHclObjects(outputFolder, resourceToGenerate string, generateCode, generateDocs bool) {
 }
 
-func (tgc *TerraformGoogleConversionNext) GenerateResourceTests(object api.Resource, templateData TemplateData, outputFolder string) {
+func (tgc *TerraformGoogleConversionNext) GenerateResourceTests(object api.TGCResource, templateData TemplateData, outputFolder string) {
 	eligibleExample := false
 	for _, example := range object.Examples {
 		if !example.ExcludeTest {
