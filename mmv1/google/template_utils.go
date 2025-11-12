@@ -63,7 +63,6 @@ var TemplateFunctions = template.FuncMap{
 	"plural":        Plural,
 	"contains":      strings.Contains,
 	"join":          strings.Join,
-	"split":         strings.Split,
 	"lower":         strings.ToLower,
 	"upper":         strings.ToUpper,
 	"hasSuffix":     strings.HasSuffix,
