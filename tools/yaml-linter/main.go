@@ -1,0 +1,4 @@
+package yamllinter
+
+func main() {
+}
