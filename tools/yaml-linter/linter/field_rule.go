@@ -4,19 +4,30 @@ import "github.com/GoogleCloudPlatform/magic-modules/mmv1/api"
 
 type FieldRule struct {
 	Name     string
-	Messages func(field *api.Type) []string
+	Messages func(field *api.Type) []FieldMessage
 }
 
-func ImmutableWithUpdateURLOrVerbMessages(field *api.Type) []string {
+type FieldMessage struct {
+	Path    string
+	Message string
+}
+
+func ImmutableWithUpdateURLOrVerbMessages(field *api.Type, path string) []FieldMessage {
 	if !field.Immutable {
 		return nil
 	}
-	var messages []string
+	var messages []FieldMessage
 	if field.UpdateVerb != "" {
-		messages = append(messages, "update_verb included with immutable on "+field.Name)
+		messages = append(messages, FieldMessage{
+			Path:    path,
+			Message: "update_verb included with immutable on " + field.Name,
+		})
 	}
 	if field.UpdateUrl != "" {
-		messages = append(messages, "update_url included with immutable on "+field.Name)
+		messages = append(messages, FieldMessage{
+			Path:    path,
+			Message: "update_url included with immutable on " + field.Name,
+		})
 	}
 	if len(messages) > 0 {
 		return messages
